@@ -144,7 +144,7 @@
                     </select>
                 </div>
                 <div class="w-48 h-48 rounded-full border-4 border-blue-500/40 bg-zinc-950 flex items-center justify-center overflow-hidden shadow-lg">
-                    <img src="assistant1_success.png" alt="Brian" class="w-full h-full object-cover">
+                    <img src="Assistant1_success.png" alt="Brian" class="w-full h-full object-cover">
                 </div>
             </div>
 
@@ -209,7 +209,7 @@
 
             <div class="flex items-center gap-4 flex-shrink-0">
                 <div class="flex flex-col items-center justify-center bg-zinc-855 border-2 border-zinc-700 p-1.5 rounded-xl shadow-inner w-24 h-24 overflow-hidden" id="portrait-container">
-                    <img id="assistant-portrait-img" src="assistant1_2.png" alt="Assistant Brian" class="w-full h-full object-cover">
+                    <img id="assistant-portrait-img" src="Assistant1_2.png" alt="Assistant Brian" class="w-full h-full object-cover">
                 </div>
 
                 <div class="flex items-center gap-2 font-mono bg-zinc-950 border border-zinc-850 px-4 py-3 rounded-xl shadow-inner text-sm">
@@ -393,16 +393,16 @@
             if (!portraitImg) return;
             
             if (mood === 'happy') {
-                portraitImg.src = 'assistant1_success.png';
+                portraitImg.src = 'Assistant1_success.png';
                 evaluationStateTriggered = true;
             } else if (mood === 'sad') {
-                portraitImg.src = 'assistant1_fail.png';
+                portraitImg.src = 'Assistant1_fail.png';
                 evaluationStateTriggered = true;
             } else if (mood === 'warn') {
-                portraitImg.src = 'assistant1_not_finished.png';
+                portraitImg.src = 'Assistant1_not_finished.png';
                 evaluationStateTriggered = true;
             } else if (mood === 'neutral') {
-                portraitImg.src = 'assistant1_2.png';
+                portraitImg.src = 'Assistant1_2.png';
             }
         }
 
