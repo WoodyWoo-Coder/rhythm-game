@@ -59,246 +59,6 @@
             z-index: 30 !important;
             pointer-events: none;
         }
-
-        /* ==========================================================================
-           INTEGRATED MOBILE LANDSCAPE OPTIMIZATIONS (DOES NOT TOUCH DESKTOP VERSION)
-           ========================================================================== */
-        @media screen and (max-device-width: 932px) and (orientation: landscape) {
-            /* Block screen layout scrolling shenanigans */
-            html, body {
-                height: 100vh !important;
-                max-height: 100vh !important;
-                overflow: hidden !important;
-                position: relative;
-                margin: 0;
-                padding: 0;
-            }
-
-            /* Bind layout containers to viewport height limits */
-            #screen-1, #screen-2, #screen-3 {
-                height: 94vh !important;
-                max-height: 94vh !important;
-                overflow: hidden !important;
-                box-sizing: border-box;
-                padding: 8px 16px !important;
-                margin: auto !important;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-            
-            /* Hidden utilities override when flex logic is forced */
-            .hidden {
-                display: none !important;
-            }
-
-            /* Screen 1 Fixes: Prevent title cut-offs */
-            #screen-1 {
-                space-y: 3px !important;
-                gap: 6px !important;
-            }
-            #screen-1 > div.border-4 {
-                padding: 6px !important;
-                margin-top: 2px !important;
-                max-width: 80% !important;
-            }
-            #screen-1 h1 {
-                font-size: 1.8rem !important;
-                line-height: 1.1 !important;
-            }
-            #screen-1 p.text-md {
-                margin-top: 2px !important;
-                font-size: 0.8rem !important;
-            }
-            #screen-1 div.pt-2 {
-                padding-top: 2px !important;
-            }
-            #screen-1 div.flex-col {
-                flex-direction: row !important;
-                gap: 8px !important;
-                max-width: 90% !important;
-            }
-            #screen-1 button[onclick*="selectGameMode"] {
-                padding-top: 6px !important;
-                padding-bottom: 6px !important;
-                font-size: 0.85rem !important;
-            }
-            #screen-1 #start-game-container {
-                padding-top: 2px !important;
-            }
-            #screen-1 button[onclick="advanceToScreen2()"] {
-                padding: 6px 24px !important;
-                font-size: 1rem !important;
-            }
-
-            /* Screen 2 Fixes: Lower selectors and shrink heights */
-            #screen-2 {
-                gap: 8px !important;
-            }
-            #screen-2 h2 {
-                font-size: 1.25rem !important;
-            }
-            #screen-2 p.text-xs {
-                display: none !important; /* Save vital screen space */
-            }
-            #screen-2 div.grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 12px !important;
-            }
-            #screen-2 div.p-6 {
-                padding: 8px !important;
-                gap: 6px !important;
-            }
-            #screen-2 h3 {
-                font-size: 1rem !important;
-            }
-            #screen-2 select {
-                padding: 6px !important;
-                font-size: 0.8rem !important;
-            }
-            #screen-2 .w-48.h-48 {
-                width: 70px !important;
-                height: 70px !important;
-                margin-top: 2px !important;
-            }
-            #screen-2 .w-44.h-28 {
-                width: 100px !important;
-                height: 45px !important;
-                margin-top: 2px !important;
-            }
-            #screen-2 #instrument-icon-output {
-                font-size: 1.1rem !important;
-            }
-            #screen-2 button[onclick="advanceToGameplayDeck()"] {
-                padding: 6px 20px !important;
-                font-size: 0.9rem !important;
-            }
-
-            /* Screen 3 Fixes: Component positioning, sizing reductions and 4*1 layout constraint */
-            #screen-3 {
-                gap: 6px !important;
-                justify-content: space-between !important;
-            }
-            
-            /* Sizing panels down */
-            #screen-3 > div.w-\[95\%\] {
-                padding: 6px 12px !important;
-                margin-bottom: 2px !important;
-            }
-
-            /* Exit and BPM down to 80% original size */
-            #screen-3 button[onclick="exitAndResetToMenu()"] img {
-                width: 32px !important;
-                height: 32px !important;
-            }
-            #screen-3 input#bpm-input {
-                width: 55px !important;
-                padding: 3px !important;
-                font-size: 0.85rem !important;
-            }
-            #screen-3 #bpm-range-indicator {
-                font-size: 8px !important;
-            }
-
-            /* Adjust controls layout spacing */
-            #screen-3 #play-btn, #screen-3 #check-btn {
-                padding: 6px 14px !important;
-                font-size: 0.75rem !important;
-            }
-            #screen-3 #hint-btn, #screen-3 #surrender-btn {
-                padding: 6px 10px !important;
-                font-size: 0.7rem !important;
-            }
-
-            /* Assistant Icon smaller size layout */
-            #screen-3 #portrait-container {
-                width: 44px !important;
-                height: 44px !important;
-                border-width: 1px !important;
-            }
-
-            /* Dynamic Score Display Restructuring (Score over Question Info on Right) */
-            #screen-3 div.font-mono.bg-zinc-950 {
-                display: flex !important;
-                flex-direction: column-reverse !important;
-                align-items: flex-end !important;
-                justify-content: center !important;
-                padding: 4px 8px !important;
-                min-width: 65px !important;
-                line-height: 1.1 !important;
-                gap: 1px !important;
-            }
-            #screen-3 div.font-mono.bg-zinc-950 > span:not([id]) {
-                display: none !important; /* Remove static text descriptors to clear area */
-            }
-            #screen-3 #question-index-label {
-                font-size: 10px !important;
-                color: #71717a !important;
-                margin-right: 0 !important;
-                order: 1 !important;
-            }
-            #screen-3 #score-numerator {
-                font-size: 1rem !important;
-                color: #f4f4f5 !important;
-                order: 2 !important;
-            }
-            #screen-3 #score-numerator::after {
-                content: ' / ' #score-denominator;
-            }
-            #screen-3 div.font-mono.bg-zinc-950 text-sm, 
-            #screen-3 #score-denominator {
-                font-size: 0.8rem !important;
-                color: #a1a1aa !important;
-                order: 3 !important;
-            }
-
-            /* Hide Titles or labels to maximize space */
-            #pool-title-label, #answer-grid-title-label {
-                font-size: 9px !important;
-                margin: 0 !important;
-            }
-
-            /* 8 Cards Panel layout optimization */
-            #clue-grid-target {
-                grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
-                gap: 4px !important;
-            }
-            #clue-grid-target [id^="clue-node-"] {
-                border-radius: 6px !important;
-            }
-            #clue-grid-target [id^="clue-node-"] div:first-child {
-                font-size: 8px !important;
-                padding-top: 1px !important;
-                padding-bottom: 1px !important;
-            }
-
-            /* Lowering Answer grid area and forcing strict 4*1 layout setup */
-            #screen-3 div.pt-4.border-t {
-                padding-top: 4px !important;
-                margin-top: 2px !important;
-            }
-            #user-blanks-target {
-                grid-template-columns: repeat(4, minmax(0, 1fr)) !important; /* Forced 4*1 layout logic */
-                max-width: 75% !important;
-                margin: 0 auto !important;
-            }
-            #user-blanks-target [id^="blank-node-"] {
-                aspect-ratio: 16 / 9 !important;
-            }
-            #user-blanks-target [id^="blank-node-"] span {
-                font-size: 9px !important;
-            }
-
-            /* Lower Reset icon element slightly */
-            #reset-blanks-btn {
-                margin-top: 2px !important;
-                padding: 3px !important;
-            }
-            #reset-blanks-btn img {
-                width: 16px !important;
-                height: 16px !important;
-            }
-        }
     </style>
 </head>
 <body class="bg-zinc-900 text-zinc-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 select-none">
@@ -710,7 +470,6 @@
             startContainer.classList.add('opacity-100', 'max-h-24');
         }
 
-        /* Chrome Audio Initialization Fix: Triggered on user interaction */
         function initAudioContextContext() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1043,13 +802,13 @@
             }
 
             document.getElementById('play-btn').disabled = true;
-            document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-950 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
+            document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
             
             document.getElementById('hint-btn').disabled = true;
-            document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+            document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
             
             document.getElementById('surrender-btn').disabled = true;
-            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
             
             document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
             document.getElementById('bpm-input').disabled = true;
@@ -1102,7 +861,7 @@
         function disablePlaybackKeyPermanently() {
             const playButtonNode = document.getElementById('play-btn');
             playButtonNode.disabled = true;
-            playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-950 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-40 shadow-none";
+            playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-40 shadow-none";
             playButtonNode.innerHTML = "❌ 次數用盡";
         }
 
@@ -1361,7 +1120,7 @@
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
                 
                 document.getElementById('surrender-btn').disabled = true;
-                document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-950 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
+                document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
 
                 updateAssistantExpression('happy');
             } else {
