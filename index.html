@@ -35,8 +35,8 @@
 
         /* Mobile Layout & Layer Adjustments */
         @media (max-width: 768px) {
-            /* Restructure the deck flow to keep a balanced landscape layout on phones */
-            #screen-3 {
+            /* 修正：只有在 screen-3 沒有被隱藏 (.hidden) 的情況下，才在手機版套用彈性排版 */
+            #screen-3:not(.hidden) {
                 display: flex;
                 flex-direction: column;
                 gap: 1rem !important;
@@ -483,88 +483,57 @@
             initAudioContextContext();
             document.getElementById('screen-1').classList.replace('block', 'hidden');
             document.getElementById('screen-2').classList.replace('hidden', 'block');
-            syncInstrumentIconDisplay(); 
+            syncInstrumentIconDisplay();
         }
 
         function advanceToGameplayDeck() {
             initAudioContextContext();
             document.getElementById('screen-2').classList.replace('block', 'hidden');
             document.getElementById('screen-3').classList.replace('hidden', 'block');
-            
             totalQuestionsProcessed = 1;
             dynamicCorrectCount = 0.0;
             dynamicTotalAttemptsCount = 0;
-            
             document.getElementById('score-numerator').innerText = "0";
             document.getElementById('score-denominator').innerText = "0";
-
-            const bpmInput = document.getElementById('bpm-input');
-            const rangeIndicator = document.getElementById('bpm-range-indicator');
-
-            if (selectedMode === 'easy') {
-                bpmInput.value = 60;
-                bpmInput.min = 60;
-                rangeIndicator.innerText = "(範圍: 60-200)";
-            } else if (selectedMode === 'hard') {
-                bpmInput.value = 90;
-                bpmInput.min = 90;
-                rangeIndicator.innerText = "(範圍: 90-200)";
-            } else if (selectedMode === 'extreme') {
-                bpmInput.value = 120;
-                bpmInput.min = 120;
-                rangeIndicator.innerText = "(範圍: 120-200)";
-            }
-
             generateRandomLevelGoal();
-            buildClueGrid();
         }
 
         function generateRandomLevelGoal() {
-            let pool1To5 = [1, 2, 3, 4, 5];
-            let pool6To8 = [6, 7, 8];
             let generatedSuccessfully = false;
-
-            while (!generatedSuccessfully) {
+            while(!generatedSuccessfully) {
                 secretLevelTargetPattern = [];
-                
-                if (selectedMode === 'easy') {
-                    for (let i = 0; i < 4; i++) {
-                        let randVal = pool1To5[Math.floor(Math.random() * pool1To5.length)];
-                        secretLevelTargetPattern.push(randVal);
+                for(let i=0; i<4; i++) {
+                    let chosenId = 1;
+                    if(selectedMode === 'easy') {
+                        chosenId = Math.floor(Math.random() * 5) + 1; 
+                    } else if(selectedMode === 'hard') {
+                        if(i < 2) {
+                            chosenId = Math.floor(Math.random() * 5) + 1;
+                        } else {
+                            chosenId = Math.floor(Math.random() * 3) + 6;
+                        }
+                    } else if(selectedMode === 'extreme') {
+                        if(i < 1) {
+                            chosenId = Math.floor(Math.random() * 5) + 1;
+                        } else {
+                            chosenId = Math.floor(Math.random() * 3) + 6;
+                        }
                     }
-                } else if (selectedMode === 'hard') {
-                    let assignments = [
-                        pool1To5[Math.floor(Math.random() * pool1To5.length)],
-                        pool1To5[Math.floor(Math.random() * pool1To5.length)],
-                        pool6To8[Math.floor(Math.random() * pool6To8.length)],
-                        pool6To8[Math.floor(Math.random() * pool6To8.length)]
-                    ];
-                    assignments.sort(() => Math.random() - 0.5);
-                    secretLevelTargetPattern = assignments;
-                } else if (selectedMode === 'extreme') {
-                    let assignments = [
-                        pool1To5[Math.floor(Math.random() * pool1To5.length)],
-                        pool6To8[Math.floor(Math.random() * pool6To8.length)],
-                        pool6To8[Math.floor(Math.random() * pool6To8.length)],
-                        pool6To8[Math.floor(Math.random() * pool6To8.length)]
-                    ];
-                    assignments.sort(() => Math.random() - 0.5);
-                    secretLevelTargetPattern = assignments;
+                    secretLevelTargetPattern.push(chosenId);
                 }
-
-                let uniqueCheckSet = new Set(secretLevelTargetPattern);
-                if (uniqueCheckSet.size >= 3) {
+                
+                let uniqueValuesCount = new Set(secretLevelTargetPattern).size;
+                if(selectedMode === 'easy' || uniqueValuesCount >= 3) {
                     generatedSuccessfully = true;
                 }
             }
-
             currentAnswersState = [];
             lockedBlanksMask = [];
-            hasAttemptedCurrentQuestion = false; 
+            hasAttemptedCurrentQuestion = false;
             surrenderStateActive = false;
 
             if (selectedMode === 'easy') {
-                remainingPlaybackTimes = -1; 
+                remainingPlaybackTimes = -1;
             } else if (selectedMode === 'hard') {
                 remainingPlaybackTimes = 2;
             } else if (selectedMode === 'extreme') {
@@ -575,18 +544,16 @@
                 currentAnswersState.push(null);
                 lockedBlanksMask.push(false);
             }
-
             hintUsedForCurrentQuestion = false;
             hintTargetingModeActive = false;
-            evaluationStateTriggered = false; 
+            evaluationStateTriggered = false;
 
             document.getElementById('question-index-label').innerText = `Q${totalQuestionsProcessed}/${maxQuestions}`;
-            
             const playButtonNode = document.getElementById('play-btn');
             playButtonNode.disabled = false;
             playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
             playButtonNode.innerHTML = "▶ 播放";
-
+            
             updateAssistantExpression('neutral');
             updatePlaybackCountDisplay();
             enableAllInteractionControls();
@@ -607,18 +574,17 @@
         function buildClueGrid() {
             const container = document.getElementById('clue-grid-target');
             container.innerHTML = '';
-
             for(let i = 1; i <= 8; i++) {
                 const elementBox = document.createElement('div');
                 elementBox.id = `clue-node-${i}`;
-                elementBox.onclick = () => { 
-                    if (!hintTargetingModeActive && !surrenderStateActive) autoAssignRhythmToBlank(i); 
+                elementBox.onclick = () => {
+                    if (!hintTargetingModeActive && !surrenderStateActive) autoAssignRhythmToBlank(i);
                 };
                 elementBox.className = "cursor-pointer aspect-square flex flex-col bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden hover:border-zinc-500 transition-all duration-100 group";
                 elementBox.innerHTML = `
                     <div class="text-[10px] text-center bg-zinc-800 py-1 text-zinc-400 font-bold border-b border-zinc-700 group-hover:bg-zinc-700 transition-colors">圖${i}</div>
                     <div class="relative flex-1 bg-white flex items-center justify-center p-2 min-h-0">
-                        <img src="${i}.jpg" alt="Rhythm step pattern" class="rhythm-asset-img" onerror="brokenAssetFallbackHandler(this, i)"/>
+                        <img src="${i}.jpg" alt="Rhythm step pattern" class="rhythm-asset-img" onerror="brokenAssetFallbackHandler(this, ${i})"/>
                     </div>
                 `;
                 container.appendChild(elementBox);
@@ -626,38 +592,37 @@
         }
 
         function buildUserBlanks() {
+            buildClueGrid();
             const container = document.getElementById('user-blanks-target');
             container.innerHTML = '';
 
-            for (let idx = 0; idx < 4; idx++) {
+            for(let idx = 0; idx < 4; idx++) {
                 const beatFileId = currentAnswersState[idx];
-                const blockFrame = document.createElement('div');
-                blockFrame.id = `blank-node-${idx}`;
-                
-                blockFrame.onclick = () => { 
-                    if (surrenderStateActive) return; 
-                    if (hintTargetingModeActive) {
-                        lockSingleTargetedHintBlank(idx);
-                    } else {
-                        removeSelectedBlankValue(idx); 
-                    }
-                };
-                
                 const isLocked = lockedBlanksMask[idx];
+
+                const blockFrame = document.createElement('div');
+                blockFrame.className = "aspect-square bg-zinc-950 border-r border-zinc-800 last:border-r-0 flex flex-col justify-between relative cursor-pointer group mobile-padded-slot min-h-0";
                 
-                let highlightBg = "bg-zinc-950/60 hover:bg-zinc-900/40";
-                if (beatFileId !== null) {
-                    highlightBg = (isLocked || surrenderStateActive) ? "bg-amber-600/10 border-amber-500" : "bg-white";
+                if (hintTargetingModeActive && !isLocked) {
+                    blockFrame.className += " ring-2 ring-amber-500 bg-amber-950/10 hover:bg-amber-900/20";
+                    blockFrame.onclick = () => executeHintInjectedSelection(idx);
+                } else {
+                    blockFrame.onclick = () => {
+                        if (!surrenderStateActive) removeSelectedBlankValue(idx);
+                    };
                 }
 
-                let hintPulseClass = (hintTargetingModeActive && !isLocked) ? "animate-pulse border-amber-500 bg-amber-950/20 ring-4 ring-amber-500/30" : "border-transparent";
-                
-                blockFrame.className = `cursor-pointer aspect-[4/3] ${highlightBg} flex flex-col items-center justify-center transition-all overflow-hidden border border-zinc-800 relative mobile-padded-slot`;
-                
+                if (isLocked) {
+                    blockFrame.className += " ring-2 ring-emerald-500/60 bg-emerald-950/10";
+                }
+
                 if (beatFileId === null) {
                     blockFrame.innerHTML = `
-                        <span class="text-[10px] font-black ${hintTargetingModeActive ? 'text-amber-400' : 'text-zinc-600'} uppercase tracking-widest">
-                            ${hintTargetingModeActive ? '✨ 點擊解鎖' : `B${idx + 1}`}
+                        <div class="absolute inset-0 flex items-center justify-center text-zinc-700 font-mono text-xs font-bold tracking-tighter select-none group-hover:text-zinc-500 transition-colors">
+                            [空位 ${idx + 1}]
+                        </div>
+                        <span class="absolute bottom-1 right-1.5 font-mono text-[9px] font-black text-zinc-600">
+                            ${isLocked ? `🔒 B${idx + 1}` : `B${idx + 1}`}
                         </span>
                     `;
                 } else {
@@ -674,7 +639,6 @@
         function autoAssignRhythmToBlank(rhythmId) {
             let placedIndex = -1;
             let totalFilledCount = 0;
-
             for(let i=0; i<4; i++) {
                 if(currentAnswersState[i] !== null) {
                     totalFilledCount++;
@@ -683,9 +647,7 @@
                     placedIndex = i;
                 }
             }
-
             if (totalFilledCount === 4) return;
-
             if (placedIndex !== -1) {
                 currentAnswersState[placedIndex] = rhythmId;
                 buildUserBlanks();
@@ -729,15 +691,14 @@
 
         function activateHintTargetingMode() {
             if (hintUsedForCurrentQuestion || surrenderStateActive) return;
-            
             hintTargetingModeActive = true;
             hintUsedForCurrentQuestion = true;
-
+            
             document.getElementById('pool-title-label').innerText = "⚠️ [提示模式中] 上方卡片已暫時停用";
             document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-amber-500 animate-pulse";
             document.getElementById('answer-grid-title-label').innerText = "👉 請直接點擊下方其中一個空格來置入正確答案";
             document.getElementById('answer-grid-title-label').className = "text-xs font-bold uppercase tracking-widest text-amber-400";
-
+            
             document.getElementById('play-btn').disabled = true;
             document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
             document.getElementById('check-btn').disabled = true;
@@ -746,32 +707,23 @@
             document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
             document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
             document.getElementById('bpm-input').disabled = true;
-
-            const hintBtn = document.getElementById('hint-btn');
-            hintBtn.innerText = "✨ 請選擇欄位...";
-            hintBtn.disabled = true;
-            hintBtn.className = "px-5 py-2.5 bg-amber-600 border border-amber-400 rounded-xl text-xs font-black text-white animate-pulse shadow-md";
-
+            
             buildUserBlanks();
         }
 
-        function lockSingleTargetedHintBlank(idx) {
-            currentAnswersState[idx] = secretLevelTargetPattern[idx];
-            lockedBlanksMask[idx] = true;
-            hintTargetingModeActive = false;
+        function executeHintInjectedSelection(targetSlotIndex) {
+            const analyticalAnswerId = secretLevelTargetPattern[targetSlotIndex];
+            currentAnswersState[targetSlotIndex] = analyticalAnswerId;
+            lockedBlanksMask[targetSlotIndex] = true;
 
+            hintTargetingModeActive = false;
             document.getElementById('pool-title-label').innerText = "基本節奏型態 (點擊卡片直接填入下方空格)";
             document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-zinc-500";
             document.getElementById('answer-grid-title-label').innerText = "答題組合欄位 (Seamless Answer Grid)";
             document.getElementById('answer-grid-title-label').className = "text-xs font-bold uppercase tracking-widest text-zinc-500";
-
-            if (remainingPlaybackTimes === 0) {
-                disablePlaybackKeyPermanently();
-            } else {
-                document.getElementById('play-btn').disabled = false;
-                document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
-            }
             
+            document.getElementById('play-btn').disabled = false;
+            document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
             document.getElementById('check-btn').disabled = false;
             document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
             document.getElementById('surrender-btn').disabled = false;
@@ -780,7 +732,7 @@
             document.getElementById('bpm-input').disabled = false;
 
             const hintBtn = document.getElementById('hint-btn');
-            hintBtn.innerText = "❌ 提示已使用";
+            hintBtn.innerText = "❌ 已使用";
             hintBtn.disabled = true;
             hintBtn.className = "px-5 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
 
@@ -803,66 +755,68 @@
 
             document.getElementById('play-btn').disabled = true;
             document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
-            
             document.getElementById('hint-btn').disabled = true;
             document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
-            
             document.getElementById('surrender-btn').disabled = true;
             document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
-            
             document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
             document.getElementById('bpm-input').disabled = true;
 
             document.getElementById('pool-title-label').innerText = "🏳️ [已放棄此題] 答案已自動公布";
-            document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-red-400";
+            document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-red-400 animate-pulse";
 
             const checkActionNode = document.getElementById('check-btn');
             checkActionNode.innerHTML = "下一題 ➔";
-            checkActionNode.className = "px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 font-black rounded-xl shadow-md border border-zinc-600 transition-colors uppercase tracking-wider text-sm";
+            checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
             checkActionNode.onclick = stepForwardToNextLevelPattern;
-            checkActionNode.disabled = false;
 
-            updateAssistantExpression('sad');
-            triggerSfxNotification(false);
+            updateAssistantExpression('warn');
             buildUserBlanks();
         }
 
         function enableAllInteractionControls() {
-            const checkActionNode = document.getElementById('check-btn');
-            checkActionNode.innerHTML = "✓ 檢查";
-            checkActionNode.className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
-            checkActionNode.onclick = checkUserSubmission;
-            checkActionNode.disabled = false;
+            document.getElementById('check-btn').innerHTML = "✓ 檢查";
+            document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+            document.getElementById('check-btn').onclick = checkUserSubmission;
+            document.getElementById('check-btn').disabled = false;
 
             const hintBtn = document.getElementById('hint-btn');
             hintBtn.disabled = false;
-            hintBtn.innerHTML = "💡 提示";
+            hintBtn.innerText = "💡 提示";
             hintBtn.className = "px-5 py-2.5 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-xl text-xs font-black text-amber-400 uppercase tracking-wider shadow-md";
 
-            const surrenderBtn = document.getElementById('surrender-btn');
-            surrenderBtn.disabled = false;
-            surrenderBtn.innerHTML = "🏳️ 放棄";
-            surrenderBtn.className = "px-5 py-2.5 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-xs font-black text-red-400 uppercase tracking-wider shadow-md";
-
+            document.getElementById('surrender-btn').disabled = false;
+            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-xs font-black text-red-400 uppercase tracking-wider shadow-md";
+            
             document.getElementById('reset-blanks-btn').className = "p-1 hover:bg-zinc-800 rounded transition-colors focus:outline-none";
             document.getElementById('bpm-input').disabled = false;
-            
+
             document.getElementById('pool-title-label').innerText = "基本節奏型態 (點擊卡片直接填入下方空格)";
             document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-zinc-500";
-            
-            if (remainingPlaybackTimes !== 0) {
-                document.getElementById('play-btn').disabled = false;
-                document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
-            } else {
-                disablePlaybackKeyPermanently();
-            }
         }
 
-        function disablePlaybackKeyPermanently() {
+        function disableControlDecksDuringPlayback() {
+            document.getElementById('bpm-input').disabled = true;
+            document.getElementById('check-btn').disabled = true;
+            document.getElementById('surrender-btn').disabled = true;
+            document.getElementById('hint-btn').disabled = true;
+        }
+
+        function restoreControlsPostPlayback() {
+            document.getElementById('bpm-input').disabled = false;
+            document.getElementById('check-btn').disabled = false;
+            document.getElementById('surrender-btn').disabled = surrenderStateActive;
+
+            if(!hintUsedForCurrentQuestion && !surrenderStateActive) {
+                document.getElementById('hint-btn').disabled = false;
+            }
+
             const playButtonNode = document.getElementById('play-btn');
-            playButtonNode.disabled = true;
-            playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-40 shadow-none";
-            playButtonNode.innerHTML = "❌ 次數用盡";
+            if(remainingPlaybackTimes === 0) {
+                playButtonNode.disabled = true;
+                playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-40 shadow-none";
+                playButtonNode.innerHTML = "❌ 次數用盡";
+            }
         }
 
         function syncBpmValue(rawInput) {
@@ -877,20 +831,17 @@
 
         function startPrecIOuseAudioPlayback() {
             if (playbackActive) return;
-            if (remainingPlaybackTimes === 0) return; 
+            if (remainingPlaybackTimes === 0) return;
 
             initAudioContextContext();
-            
             playbackActive = true;
 
             if (remainingPlaybackTimes > 0) {
                 remainingPlaybackTimes--;
                 updatePlaybackCountDisplay();
             }
-            
-            document.getElementById('bpm-input').disabled = true;
-            document.getElementById('check-btn').disabled = true;
-            document.getElementById('surrender-btn').disabled = true;
+
+            disableControlDecksDuringPlayback();
 
             const playButtonNode = document.getElementById('play-btn');
             playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-blue-600 border border-blue-500 text-white animate-pulse uppercase tracking-wider cursor-not-allowed shadow-md";
@@ -901,14 +852,13 @@
             banner.classList.remove('hidden');
             bannerText.innerText = "4";
 
-            const startTime = audioCtx.currentTime + 0.05; 
+            const startTime = audioCtx.currentTime + 0.05;
             const beatDuration = 60 / activeBpmValue;
             const subbeatDuration = beatDuration / 4;
 
             for (let i = 0; i < 4; i++) {
                 const clickTime = startTime + (i * beatDuration);
                 scheduleMetronomeClick(clickTime);
-                
                 let tRef = setTimeout(() => {
                     bannerText.innerText = (4 - i);
                 }, (clickTime - audioCtx.currentTime) * 1000);
@@ -916,52 +866,51 @@
             }
 
             const sequenceStartTime = startTime + (4 * beatDuration);
-            
             let hideBannerRef = setTimeout(() => {
                 banner.classList.add('hidden');
             }, (sequenceStartTime - audioCtx.currentTime) * 1000);
             visualTimerRefs.push(hideBannerRef);
 
-            let totalSubbeats = 4 * 4; 
-
+            let totalSubbeats = 4 * 4;
             for (let tick = 0; tick < totalSubbeats; tick++) {
                 const noteScheduledTime = sequenceStartTime + (tick * subbeatDuration);
-                const patternIdx = Math.floor(tick / 4);
-                const subStepIdx = tick % 4;
+                let currentBlockIndex = Math.floor(tick / 4);
+                let subStep = tick % 4;
+                let targetMatrixId = secretLevelTargetPattern[currentBlockIndex];
+                let isNoteActive = binaryNoteMatrix[targetMatrixId][subStep];
 
-                const activeTargetNoteId = secretLevelTargetPattern[patternIdx];
-                const activeBinaryArray = binaryNoteMatrix[activeTargetNoteId];
-
-                if (activeBinaryArray && activeBinaryArray[subStepIdx] === 1) {
+                if (isNoteActive) {
                     scheduleInstrumentSound(noteScheduledTime);
                 }
 
-                if (selectedMode === 'easy' || selectedMode === 'hard') {
-                    let highlightRef = setTimeout(() => {
-                        removeVisualHighlights();
-                        applyVisualHighlight(patternIdx);
+                if (subStep === 0) {
+                    let highlightStartRef = setTimeout(() => {
+                        triggerVisualSlotHighlight(currentBlockIndex, beatDuration);
                     }, (noteScheduledTime - audioCtx.currentTime) * 1000);
-                    visualTimerRefs.push(highlightRef);
+                    visualTimerRefs.push(highlightStartRef);
                 }
             }
 
-            const totalDurationMs = (sequenceStartTime + (totalSubbeats * subbeatDuration) - audioCtx.currentTime) * 1000;
-            let endRef = setTimeout(() => {
-                removeVisualHighlights();
+            const totalDurationRequired = 4 * beatDuration + 4 * beatDuration;
+            let completionTimerRef = setTimeout(() => {
                 playbackActive = false;
-                
-                document.getElementById('bpm-input').disabled = false;
-                document.getElementById('check-btn').disabled = false;
-                document.getElementById('surrender-btn').disabled = false;
+                playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+                playButtonNode.innerHTML = "▶ 播放";
+                restoreControlsPostPlayback();
+            }, totalDurationRequired * 1000);
+            visualTimerRefs.push(completionTimerRef);
+        }
 
-                if (remainingPlaybackTimes === 0) {
-                    disablePlaybackKeyPermanently();
-                } else {
-                    playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
-                    playButtonNode.innerHTML = "▶ 播放";
-                }
-            }, totalDurationMs);
-            visualTimerRefs.push(endRef);
+        function triggerVisualSlotHighlight(blockIdx, totalDuration) {
+            const container = document.getElementById('user-blanks-target');
+            if(!container || !container.children[blockIdx]) return;
+            
+            const targetElement = container.children[blockIdx];
+            targetElement.classList.add('playback-highlight-overlay');
+            
+            setTimeout(() => {
+                targetElement.classList.remove('playback-highlight-overlay');
+            }, totalDuration * 1000);
         }
 
         function scheduleMetronomeClick(time) {
@@ -979,7 +928,6 @@
 
         function scheduleInstrumentSound(time) {
             const selectedInstrument = document.getElementById('synth-type').value;
-            
             let osc = audioCtx.createOscillator();
             let gainNode = audioCtx.createGain();
             osc.connect(gainNode);
@@ -1023,118 +971,104 @@
             } else if (selectedInstrument === 'claves') {
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(1500, time);
-                gainNode.gain.setValueAtTime(0.2, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+                gainNode.gain.setValueAtTime(0.22, time);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
             }
-
             osc.start(time);
             osc.stop(time + 0.2);
         }
 
-        function triggerSfxNotification(isCorrect) {
+        function triggerSfxNotification(isCorrectVariant) {
             initAudioContextContext();
-            const now = audioCtx.currentTime;
-
-            if (isCorrect) {
-                const steps = [523.25, 659.25, 783.99, 1046.50]; 
-                steps.forEach((freq, idx) => {
-                    let osc = audioCtx.createOscillator();
-                    let gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(freq, now + (idx * 0.06));
-                    gain.gain.setValueAtTime(0.15, now + (idx * 0.06));
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.06) + 0.25);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + (idx * 0.06));
-                    osc.stop(now + (idx * 0.06) + 0.3);
-                });
+            const referenceTime = audioCtx.currentTime;
+            
+            if(isCorrectVariant) {
+                let osc1 = audioCtx.createOscillator();
+                let osc2 = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(523.25, referenceTime); 
+                osc1.frequency.setValueAtTime(659.25, referenceTime + 0.1); 
+                
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(392.00, referenceTime);
+                osc2.frequency.setValueAtTime(523.25, referenceTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.2, referenceTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, referenceTime + 0.3);
+                
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc1.start(referenceTime);
+                osc2.start(referenceTime);
+                osc1.stop(referenceTime + 0.35);
+                osc2.stop(referenceTime + 0.35);
             } else {
                 let osc = audioCtx.createOscillator();
                 let gain = audioCtx.createGain();
+                
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(160, now);
-                osc.frequency.linearRampToValueAtTime(100, now + 0.4);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+                osc.frequency.setValueAtTime(146.83, referenceTime); 
+                osc.frequency.linearRampToValueAtTime(110.00, referenceTime + 0.25);
+                
+                gain.gain.setValueAtTime(0.25, referenceTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, referenceTime + 0.28);
+                
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            }
-        }
-
-        function applyVisualHighlight(patternIdx) {
-            const activeBlankFrame = document.getElementById(`blank-node-${patternIdx}`);
-            if (activeBlankFrame) {
-                activeBlankFrame.className += " playback-highlight-overlay";
-            }
-        }
-
-        function removeVisualHighlights() {
-            for(let i=0; i<4; i++) {
-                const frame = document.getElementById(`blank-node-${i}`);
-                if(frame) {
-                    frame.classList.remove("playback-highlight-overlay");
-                }
+                
+                osc.start(referenceTime);
+                osc.stop(referenceTime + 0.3);
             }
         }
 
         function checkUserSubmission() {
-            for (let i = 0; i < 4; i++) {
-                if (currentAnswersState[i] === null) {
-                    updateAssistantExpression('warn');
-                    return; 
-                }
-            }
+            if (playbackActive || surrenderStateActive) return;
 
             let answersAreValid = true;
-            for (let i = 0; i < 4; i++) {
-                if (currentAnswersState[i] !== secretLevelTargetPattern[i]) {
+            for(let i=0; i<4; i++) {
+                if(currentAnswersState[i] !== secretLevelTargetPattern[i]) {
                     answersAreValid = false;
                 }
             }
 
             if (!hasAttemptedCurrentQuestion) {
                 hasAttemptedCurrentQuestion = true;
-                dynamicTotalAttemptsCount++; 
+                dynamicTotalAttemptsCount++;
                 document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
 
                 let oldCorrectValue = dynamicCorrectCount;
-
                 if (answersAreValid) {
                     const rewardWeight = hintUsedForCurrentQuestion ? 0.5 : 1.0;
                     dynamicCorrectCount += rewardWeight;
                     updateUINumeratorDisplay();
                 }
-
                 evaluateMemeConditionState(oldCorrectValue);
             }
 
             const checkActionNode = document.getElementById('check-btn');
-
             if (answersAreValid) {
-                triggerSfxNotification(true); 
+                triggerSfxNotification(true);
                 checkActionNode.innerHTML = "下一題 ➔";
                 checkActionNode.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-sm";
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
-                
+
                 document.getElementById('surrender-btn').disabled = true;
                 document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
-
                 updateAssistantExpression('happy');
             } else {
-                triggerSfxNotification(false); 
+                triggerSfxNotification(false);
                 updateAssistantExpression('sad');
             }
         }
 
         function evaluateMemeConditionState(previousCorrectScore) {
             const gameDeck = document.getElementById('screen-3');
-            
             if (selectedMode === 'easy' && totalQuestionsProcessed === 7 && dynamicCorrectCount === 6) {
                 gameDeck.className += ' animate-67-meme';
-                
                 setTimeout(() => {
                     gameDeck.classList.remove('animate-67-meme');
                     document.getElementById('easter-egg-modal').classList.remove('hidden');
@@ -1162,49 +1096,33 @@
 
         function displayScreen4SummaryRecap() {
             document.getElementById('screen-3').classList.replace('block', 'hidden');
-            document.getElementById('screen-3').classList.remove('animate-67-meme');
-            
-            const screen4 = document.getElementById('screen-4');
-            screen4.classList.replace('hidden', 'block');
+            document.getElementById('screen-4').classList.replace('hidden', 'block');
 
-            document.getElementById('final-score-correct').innerText = Number.isInteger(dynamicCorrectCount) ? dynamicCorrectCount : dynamicCorrectCount.toFixed(1);
-            document.getElementById('final-score-total').innerText = maxQuestions;
+            const finalNumNode = document.getElementById('final-score-correct');
+            finalNumNode.innerText = Number.isInteger(dynamicCorrectCount) ? dynamicCorrectCount : dynamicCorrectCount.toFixed(1);
+            document.getElementById('final-score-total').innerText = dynamicTotalAttemptsCount;
 
             const textFeedbackNode = document.getElementById('final-feedback-text');
-            const roundedScore = Math.floor(dynamicCorrectCount);
+            if(dynamicTotalAttemptsCount === 0) {
+                textFeedbackNode.innerText = "未進行任何有效答題。";
+                return;
+            }
 
-            if (selectedMode === 'easy') {
-                if (dynamicCorrectCount >= 6) {
-                    textFeedbackNode.innerText = "太厲害了！你的節奏感完美無瑕，簡真就是行走的節拍器！祝賀你完成挑戰！ 🎉";
-                    textFeedbackNode.className = "text-emerald-400 font-bold text-center text-sm px-2 pt-2";
-                } else if (dynamicCorrectCount >= 3) {
-                    textFeedbackNode.innerText = "表現得不錯！你已經掌握了基本的節奏型態，再加把勁下次就能拿到滿分囉！ 👍";
-                    textFeedbackNode.className = "text-amber-400 font-medium text-center text-sm px-2 pt-2";
-                } else {
-                    textFeedbackNode.innerText = "別灰心！節奏感是可以透過練習培養的。再重新挑戰一次，助教們會陪你一起練習！ 💪";
-                    textFeedbackNode.className = "text-zinc-400 font-medium text-center text-sm px-2 pt-2";
-                }
-            } else if (selectedMode === 'hard') {
-                if (roundedScore <= 2) {
-                    textFeedbackNode.innerText = "狀況外的初學者？再多聽幾次看能不能跟上旋律吧！";
-                    textFeedbackNode.className = "text-zinc-400 font-medium text-center text-sm px-2 pt-2";
-                } else if (roundedScore === 3) {
-                    textFeedbackNode.innerText = "看來你還是有點東西的。只有一點點。";
-                    textFeedbackNode.className = "text-amber-400 font-medium text-center text-sm px-2 pt-2";
-                } else if (roundedScore === 4) {
-                    textFeedbackNode.innerText = "看來你是老手呢!";
-                    textFeedbackNode.className = "text-emerald-400 font-bold text-center text-sm px-2 pt-2";
-                } else if (roundedScore === 5) {
-                    textFeedbackNode.innerText = "完美!你是小天才吧?!";
-                    textFeedbackNode.className = "text-cyan-400 font-black text-center text-base px-2 pt-2 animate-bounce";
-                }
-            } else if (selectedMode === 'extreme') {
-                if (roundedScore === 0) {
-                    textFeedbackNode.innerText = "唉。不多說什麼了。";
-                    textFeedbackNode.className = "text-zinc-500 font-medium text-center text-sm px-2 pt-2";
-                } else if (roundedScore === 1) {
-                    textFeedbackNode.innerText = "我覺得挺正常的。";
-                    textFeedbackNode.className = "text-amber-400 font-bold text-center text-sm px-2 pt-2";
+            let statisticalRatio = dynamicCorrectCount / dynamicTotalAttemptsCount;
+            if (statisticalRatio >= 0.9) {
+                textFeedbackNode.innerText = "太厲害了！你擁有接近神一般的完美節奏感！";
+                textFeedbackNode.className = "text-emerald-400 font-extrabold text-center text-base px-2 pt-2 tracking-wide";
+            } else if (statisticalRatio >= 0.7) {
+                textFeedbackNode.innerText = "非常出色！你的聽力與拍點掌握度都相當精準。";
+                textFeedbackNode.className = "text-blue-400 font-bold text-center text-sm px-2 pt-2";
+            } else if (statisticalRatio >= 0.4) {
+                textFeedbackNode.innerText = "表現得不錯，已經具有基礎的音樂律動感，再接再厲！";
+                textFeedbackNode.className = "text-amber-400 font-medium text-center text-sm px-2 pt-2";
+            } else {
+                let roundedScore = Math.round(dynamicCorrectCount);
+                if (roundedScore === 0 || roundedScore === 1) {
+                    textFeedbackNode.innerText = "郭覲德覺得你不行。";
+                    textFeedbackNode.className = "text-zinc-400 font-bold text-center text-sm px-2 pt-2";
                 } else if (roundedScore === 2) {
                     textFeedbackNode.innerText = "運氣? 還是實力?";
                     textFeedbackNode.className = "text-purple-400 font-bold text-center text-sm px-2 pt-2";
@@ -1219,17 +1137,12 @@
             visualTimerRefs.forEach(clearTimeout);
             visualTimerRefs = [];
             playbackActive = false;
-
-            totalQuestionsProcessed = 1;
-            dynamicCorrectCount = 0.0;
-            dynamicTotalAttemptsCount = 0;
-            hasAttemptedCurrentQuestion = false;
-            hintUsedForCurrentQuestion = false;
-            surrenderStateActive = false;
-
-            document.getElementById('screen-3').classList.remove('animate-67-meme');
+            
             document.getElementById('screen-3').classList.replace('block', 'hidden');
             document.getElementById('screen-1').classList.replace('hidden', 'block');
+            
+            const startContainer = document.getElementById('start-game-container');
+            startContainer.classList.replace('block', 'hidden');
         }
 
         function restartEntireGameLoop() {
