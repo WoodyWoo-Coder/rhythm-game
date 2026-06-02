@@ -83,10 +83,10 @@
             <button onclick="selectGameMode('easy')" id="mode-easy" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-100 bg-zinc-100 text-zinc-900 shadow-xl transition-all scale-105">
                 簡單模式
             </button>
-            <button onclick="selectGameMode('hard')" id="mode-hard" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base">
+            <button onclick="selectGameMode('hard')" id="mode-hard" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base";>
                 中等模式
             </button>
-            <button onclick="selectGameMode('extreme')" id="mode-extreme" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base">
+            <button onclick="selectGameMode('extreme')" id="mode-extreme" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base";>
                 困難模式
             </button>
         </div>
@@ -132,7 +132,7 @@
                 
                 <div class="space-y-2">
                     <h4 class="text-white font-bold border-l-2 border-amber-500 pl-2">🤫 (2) 神祕彩蛋</h4>
-                    <p>聽說系統中隱藏了一個極度罕見的神秘彩蛋……目前唯一能透露的線索是：<strong class="text-amber-400">這個彩蛋 seems 只能在「簡單模式 (Easy Mode)」中被觸發</strong>。第一位成功發現、觸發並截圖回報的人，作者正在秘密籌備一份神祕大獎，趕緊去測試你的實力與運氣吧！</p>
+                    <p>聽說系統中隱藏了一個極度罕見的神秘彩蛋……目前唯一能透露的線索是：<strong class="text-amber-400">這個彩蛋似乎只能在「簡單模式 (Easy Mode)」中被觸發</strong>。第一位成功發現、觸發並截圖回報的人，作者正在秘密籌備一份神祕大獎，趕緊去測試你的實力與運氣吧！</p>
                 </div>
 
                 <div class="space-y-2">
@@ -179,18 +179,18 @@
                 <h3 class="text-2xl font-extrabold text-zinc-100 tracking-wide w-full text-center">選擇打擊樂器</h3>
                 <div class="w-full">
                     <select id="synth-type" onchange="syncInstrumentIconDisplay()" class="w-full bg-zinc-900 border border-zinc-600 rounded-xl p-4 text-zinc-200 font-bold focus:outline-none focus:ring-2 focus:ring-zinc-400 text-center">
-                        <option value="snare">小鼓 (Snare Drum)</option>
-                        <option value="tambourine">鈴鼓 (Tambourine)</option>
-                        <option value="woodblock">木魚/木塊 (Wood Block)</option>
-                        <option value="cowbell">牛鈴 (Cowbell)</option>
-                        <option value="bongo">邦哥鼓 (Bongo)</option>
-                        <option value="conga">康加鼓 (Conga)</option>
-                        <option value="clap">拍手聲 (Hand Clap)</option>
-                        <option value="claves">響棒 (Claves)</option>
+                        <option value="1">1. 小鼓 (Snare Drum)</option>
+                        <option value="2">2. 鈴鼓 (Tambourine)</option>
+                        <option value="3">3. 木魚 (Wood Block)</option>
+                        <option value="4">4. 牛鈴 (Cowbell)</option>
+                        <option value="5">5. 邦哥 (Bongo)</option>
+                        <option value="6">6. 康加 (Conga)</option>
+                        <option value="7">7. 擊掌聲 (Hand Clap)</option>
+                        <option value="8">8. 響木 (Claves)</option>
                     </select>
                 </div>
-                <div class="w-44 h-28 rounded-full border-4 border-emerald-500/40 bg-zinc-950 flex items-center justify-center shadow-lg">
-                    <span id="instrument-icon-output" class="text-4xl">DRAM🥁</span>
+                <div class="w-44 h-28 rounded-xl border-4 border-emerald-500/40 bg-zinc-950 flex items-center justify-center p-2 shadow-lg overflow-hidden">
+                    <img id="instrument-icon-output" src="Per1.png" alt="Instrument Cover" class="h-full w-auto object-contain">
                 </div>
             </div>
         </div>
@@ -273,7 +273,7 @@
                     <img src="reset.png" alt="Reset" class="w-5 h-5 invert brightness-200 object-contain">
                 </button>
             </div>
-            <div class="grid p-0 bg-zinc-900 rounded-xl border border-zinc-800 shadow-inner gap-0 grid-cols-4 overflow-hidden" id="user-blanks-target"></div>
+            <div class="grid p-0 bg-zinc-900 rounded-xl border border-zinc-800 shadow-inner gap-0 grid-cols-4 overflow-hidden h-24 md:h-28" id="user-blanks-target"></div>
         </div>
     </div>
 
@@ -320,6 +320,7 @@
 
     <script>
         let audioCtx = null;
+        let cachedAudioBuffers = {}; // 快取載入完成的音訊檔
 
         const binaryNoteMatrix = {
             1: [1, 0, 0, 0],
@@ -330,17 +331,6 @@
             6: [1, 1, 0, 1],
             7: [1, 1, 0, 0],
             8: [1, 0, 0, 1]
-        };
-
-        const staticInstrumentIcons = {
-            snare: "🥁",
-            tambourine: "🔔",
-            woodblock: "🪵",
-            cowbell: "🐮",
-            bongo: "🪘",
-            conga: "🪘",
-            clap: "👏",
-            claves: "🥢"
         };
 
         let selectedMode = 'easy'; 
@@ -414,9 +404,10 @@
         function syncInstrumentIconDisplay() {
             const selectedVal = document.getElementById('synth-type').value;
             const outputElement = document.getElementById('instrument-icon-output');
-            if (outputElement && staticInstrumentIcons[selectedVal]) {
-                outputElement.innerText = staticInstrumentIcons[selectedVal];
+            if (outputElement) {
+                outputElement.src = `Per${selectedVal}.png`;
             }
+            preloadActiveInstrumentSound(selectedVal); // 切換樂器時順便預載 wav 檔
         }
 
         function updateAssistantExpression(mood) {
@@ -479,11 +470,29 @@
             }
         }
 
+        // 修改 1：預先非同步載入 Scratch 的 wav 音檔，保證音樂播放時完美無延遲
+        function preloadActiveInstrumentSound(instrumentNum) {
+            if (cachedAudioBuffers[instrumentNum]) return; // 已快取過就直接返回
+            
+            initAudioContextContext();
+            const targetUrl = `${instrumentNum}.wav`;
+            
+            fetch(targetUrl)
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+                .then(audioBuffer => {
+                    cachedAudioBuffers[instrumentNum] = audioBuffer;
+                })
+                .catch(err => console.error(`讀取音檔 ${targetUrl} 失敗，請確認資料夾內是否有該原始檔:`, err));
+        }
+
         function advanceToScreen2() {
             initAudioContextContext();
             document.getElementById('screen-1').classList.replace('block', 'hidden');
             document.getElementById('screen-2').classList.replace('hidden', 'block');
             syncInstrumentIconDisplay();
+            // 先幫玩家把 1.wav 預載起來
+            preloadActiveInstrumentSound("1");
         }
 
         function advanceToGameplayDeck() {
@@ -601,7 +610,7 @@
                 const isLocked = lockedBlanksMask[idx];
 
                 const blockFrame = document.createElement('div');
-                blockFrame.className = "aspect-square bg-zinc-950 border-r border-zinc-800 last:border-r-0 flex flex-col justify-between relative cursor-pointer group mobile-padded-slot min-h-0";
+                blockFrame.className = "h-full bg-zinc-950 border-r border-zinc-800 last:border-r-0 flex flex-col justify-between relative cursor-pointer group mobile-padded-slot min-h-0";
                 
                 if (hintTargetingModeActive && !isLocked) {
                     blockFrame.className += " ring-2 ring-amber-500 bg-amber-950/10 hover:bg-amber-900/20";
@@ -627,8 +636,8 @@
                     `;
                 } else {
                     blockFrame.innerHTML = `
-                        <div class="w-full h-full flex items-center justify-center bg-white pt-0 pb-0 px-1">
-                            <img src="${beatFileId}.jpg" alt="Active rhythm assignment block" class="seamless-img" onerror="brokenAssetFallbackHandler(this, ${beatFileId})"/>
+                        <div class="w-full h-full flex items-center justify-center bg-white p-1">
+                            <img src="${beatFileId}.jpg" alt="Active rhythm assignment block" class="seamless-img max-h-full" onerror="brokenAssetFallbackHandler(this, beatFileId)"/>
                         </div>
                     `;
                 }
@@ -756,9 +765,9 @@
             document.getElementById('play-btn').disabled = true;
             document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
             document.getElementById('hint-btn').disabled = true;
-            document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+            document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
             document.getElementById('surrender-btn').disabled = true;
-            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
             document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
             document.getElementById('bpm-input').disabled = true;
 
@@ -926,56 +935,38 @@
             osc.stop(time + 0.1);
         }
 
+        // 修改 1：直接播放 Scratch 的 wav 音訊快取 (1.wav ~ 8.wav)，大幅提升聲音逼真度與精準度
         function scheduleInstrumentSound(time) {
             const selectedInstrument = document.getElementById('synth-type').value;
-            let osc = audioCtx.createOscillator();
-            let gainNode = audioCtx.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            if (selectedInstrument === 'snare') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(180, time);
+            
+            // 如果該音檔已經成功被載入快取，就使用 AudioBufferSourceNode 完美精準播放
+            if (cachedAudioBuffers[selectedInstrument]) {
+                let bufferSource = audioCtx.createBufferSource();
+                let gainNode = audioCtx.createGain();
+                
+                bufferSource.buffer = cachedAudioBuffers[selectedInstrument];
+                gainNode.gain.setValueAtTime(0.8, time); // 控制基本播放音量
+                
+                bufferSource.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                bufferSource.start(time);
+            } else {
+                // 如果來不及快取完成的極端狀況（做為後備保險），使用原有的基礎電子正弦波暫代，不讓程式卡死
+                let osc = audioCtx.createOscillator();
+                let gainNode = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, time);
                 gainNode.gain.setValueAtTime(0.3, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
-            } else if (selectedInstrument === 'tambourine') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(1200, time);
-                gainNode.gain.setValueAtTime(0.15, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-            } else if (selectedInstrument === 'woodblock') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(880, time);
-                gainNode.gain.setValueAtTime(0.2, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
-            } else if (selectedInstrument === 'cowbell') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(540, time);
-                gainNode.gain.setValueAtTime(0.25, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
-            } else if (selectedInstrument === 'bongo') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, time);
-                gainNode.gain.setValueAtTime(0.3, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.08);
-            } else if (selectedInstrument === 'conga') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(240, time);
-                gainNode.gain.setValueAtTime(0.35, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, time + 0.12);
-            } else if (selectedInstrument === 'clap') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(350, time);
-                gainNode.gain.setValueAtTime(0.28, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.07);
-            } else if (selectedInstrument === 'claves') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(1500, time);
-                gainNode.gain.setValueAtTime(0.22, time);
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                osc.start(time);
+                osc.stop(time + 0.1);
+                
+                // 順便再次觸發載入，確保下一次能順利使用 wav
+                preloadActiveInstrumentSound(selectedInstrument);
             }
-            osc.start(time);
-            osc.stop(time + 0.2);
         }
 
         function triggerSfxNotification(isCorrectVariant) {
@@ -1104,7 +1095,7 @@
 
             const textFeedbackNode = document.getElementById('final-feedback-text');
             if(dynamicTotalAttemptsCount === 0) {
-                textFeedbackNode.innerText = "未進行任何有效答題。";
+                textFeedbackNode.innerText = "未進行 any 有效答題。";
                 return;
             }
 
