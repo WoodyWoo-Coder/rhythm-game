@@ -33,22 +33,6 @@
             transform-origin: center center;
         }
 
-        /* Mobile Layout & Layer Adjustments */
-        @media (max-width: 768px) {
-            /* Restructure the deck flow to keep a balanced landscape layout on phones */
-            #screen-3 {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem !important;
-                padding: 1rem !important;
-            }
-            /* Ensure images take up full slot area smoothly on mobile */
-            .mobile-padded-slot {
-                padding-top: 0 !important;
-                padding-bottom: 0 !important;
-            }
-        }
-
         /* High-priority overlay rule to ensure blue highlight stays on top of images */
         .playback-highlight-overlay::after {
             content: '';
@@ -59,9 +43,238 @@
             z-index: 30 !important;
             pointer-events: none;
         }
+
+        /* ==========================================================================
+           全新行動端橫螢幕（Landscape）與直螢幕轉向提示引擎
+           ========================================================================== */
+        
+        /* 1. 預設隱藏的直螢幕旋轉提示層 */
+        #rotation-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #0c0a09; /* zinc-950 */
+            z-index: 9999;
+            color: #f4f4f5; /* zinc-100 */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: sans-serif;
+            text-align: center;
+        }
+        #rotation-overlay .phone-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: rotateHintAnim 2s infinite ease-in-out;
+        }
+        #rotation-overlay p {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0.25rem 0;
+            letter-spacing: 0.05em;
+        }
+        #rotation-overlay .sub-text {
+            font-size: 0.875rem;
+            color: #a1a1aa; /* zinc-400 */
+        }
+        @keyframes rotateHintAnim {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-90deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* 當偵測到手機或平板（寬度在 932px 以下）且處於【直螢幕 Portrait】狀態時，強行跳出提示層 */
+        @media (max-width: 932px) and (orientation: portrait) {
+            #rotation-overlay {
+                display: flex;
+            }
+            /* 完全隱藏遊戲主容器，避免背景漏光與直向拉伸變形 */
+            #screen-1, #screen-2, #screen-3, #screen-4 {
+                display: none !important;
+            }
+        }
+
+        /* 2. 行動端【橫螢幕 Landscape】專屬版面微調（完美相容 19.5:9 / 20:9） */
+        @media (max-width: 932px) and (orientation: landscape) {
+            body {
+                padding: 0.5rem !important;
+                overflow: hidden !important; /* 封鎖任何可能觸發的網頁外層滾動條 */
+                height: 100vh;
+                box-sizing: border-box;
+            }
+
+            /* 關卡選單（Screen 1 & 2）改為橫向平鋪以適應高度 */
+            #screen-1 {
+                padding-top: 1rem !important;
+                padding-bottom: 1rem !important;
+                gap: 0.75rem !important;
+            }
+            #screen-2 {
+                padding: 1rem !important;
+                gap: 1rem !important;
+            }
+            #screen-2 .grid-cols-1 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 1rem !important;
+            }
+            #screen-2 .w-48, #screen-2 .h-48, #screen-2 .w-44, #screen-2 .h-28 {
+                width: 7rem !important;
+                height: 7rem !important;
+            }
+
+            /* --- SCREEN 3: 核心遊玩畫面黃金比例重組 --- */
+            #screen-3 {
+                padding: 0.5rem !important;
+                gap: 0.5rem !important;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: 95vh;
+            }
+
+            /* 控制列主容器：收緊邊距 */
+            #screen-3 > .w-\[95\%\] {
+                width: 100% !important;
+                padding: 0.5rem !important;
+                margin-bottom: 0px !important;
+                gap: 0.5rem !important;
+                justify-content: flex-start !important; /* 所有元素由左至右緊密排列 */
+            }
+
+            /* 離開與 BPM 區塊 */
+            #screen-3 .flex.items-center.gap-3.flex-shrink-0 {
+                gap: 0.5rem !important;
+            }
+            #screen-3 input[type="number"] {
+                width: 4rem !important;
+                padding: 0.25rem !important;
+                font-size: 0.875rem !important;
+            }
+            #bpm-range-indicator {
+                font-size: 9px !important;
+            }
+
+            /* 核心功能按鈕群改為 2x2 緊湊方陣，徹底節省水平空間 */
+            #screen-3 .flex.flex-col.items-center.gap-1.flex-shrink-0 {
+                flex-direction: row !important;
+                align-items: center !important;
+            }
+            #screen-3 .flex.items-center.gap-2\.5 {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(65px, auto)) !important;
+                grid-template-rows: repeat(2, auto) !important;
+                gap: 0.25rem !important;
+            }
+            /* 大幅縮減按鈕內襯與文字大小，但保留足夠寬度防止檢查/下一題跑版 */
+            #play-btn, #check-btn, #hint-btn, #surrender-btn {
+                padding: 0.25rem 0.5rem !important;
+                font-size: 0.75rem !important;
+                min-width: 72px !important; /* 留足三個中文字的寬度安全區 */
+                text-align: center;
+                margin: 0 !important;
+            }
+            /* 當動態切換到「下一題」按鈕時，主動讓文字再縮小一點，安全鎖定區塊寬度 */
+            .mobile-next-btn-text {
+                font-size: 0.7rem !important;
+            }
+            #playback-limit-label {
+                display: none !important; /* 行動版隱藏文字標籤，精簡空間 */
+            }
+
+            /* 助教頭像與分數指示器：緊緊貼靠，絕不右溢 */
+            #screen-3 .flex.items-center.gap-3.flex-shrink-0:last-child {
+                gap: 0.25rem !important;
+                margin-left: 0.25rem !important;
+            }
+            /* 保持大頭貼尺寸與精緻感 */
+            #portrait-container {
+                width: 3.5rem !important;
+                height: 3.5rem !important;
+                flex-shrink: 0 !important;
+            }
+            /* 分數與題號重組：改為垂直靠左堆疊，緊附在頭像右側 */
+            #screen-3 .font-mono.bg-zinc-950 {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                justify-content: center !important;
+                padding: 0.25rem 0.5rem !important;
+                gap: 1px !important;
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+            #score-numerator {
+                font-size: 1rem !important;
+            }
+            #question-index-label {
+                font-size: 9px !important;
+                color: #a1a1aa !important;
+                margin: 0 !important;
+                order: 2; /* 讓 Q1/7 挪到分數下方緊湊顯示 */
+            }
+            #screen-3 .font-mono.bg-zinc-950 > span:nth-child(2), /* SCORE 字樣 */
+            #screen-3 .font-mono.bg-zinc-950 > span:nth-child(4) { /* 斜線 */
+                display: none !important; /* 隱藏贅字以極致利用高度空間 */
+            }
+
+            /* 倒數計時條緊湊化 */
+            #countdown-banner {
+                padding-top: 0.25rem !important;
+                padding-bottom: 0.25rem !important;
+                font-size: 0.75rem !important;
+            }
+
+            /* --- 核心卡片與答案區：拉直平行平鋪佈局 --- */
+            .space-y-3 {
+                gap: 0.25rem !important;
+            }
+            /* 題型卡片池：強行打破 4x2，改為 8x1 單列橫向完美平鋪 */
+            #clue-grid-target {
+                grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+                gap: 0.375rem !important;
+            }
+            .rhythm-card-item, #clue-grid-target > div {
+                max-height: 52px !important; /* 低高度 profile 釋放垂直空間 */
+            }
+            #clue-grid-target div div:first-child {
+                font-size: 8px !important; /* 縮小「圖1」文字 */
+                padding: 1px 0 !important;
+            }
+
+            /* 答題組合欄位：寬度拉寬，完美無縫 */
+            .pt-4.border-t {
+                padding-top: 0.25rem !important;
+                margin-top: 0px !important;
+            }
+            #user-blanks-target {
+                gap: 0px !important; /* 嚴格確保無縫相連 */
+            }
+            .answer-blank-slot, #user-blanks-target > div {
+                height: 60px !important; /* 完美契合五線譜連續圖形高度 */
+            }
+            /* 隱藏區塊標題以釋放最大視覺淨空 */
+            #pool-title-label, #answer-grid-title-label {
+                font-size: 9px !important;
+            }
+            
+            /* 補丁：確保填空槽內圖片貼合 */
+            .mobile-padded-slot {
+                padding: 0 !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-zinc-900 text-zinc-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 select-none">
+
+    <div id="rotation-overlay">
+        <div class="phone-icon">🔄</div>
+        <p>請將手機旋轉至橫螢幕</p>
+        <p class="sub-text">以獲得最佳遊戲體驗</p>
+    </div>
 
     <div id="screen-1" class="w-full max-w-3xl text-center py-12 px-6 bg-zinc-800 rounded-2xl border border-zinc-700 shadow-2xl space-y-8 block relative">
         <div class="border-4 border-zinc-600 p-8 rounded-xl max-w-xl mx-auto bg-zinc-855">
@@ -780,7 +993,7 @@
             document.getElementById('bpm-input').disabled = false;
 
             const hintBtn = document.getElementById('hint-btn');
-            hintBtn.innerText = "❌ 提示已使用";
+            hintBtn.innerText = "❌ 已使用";
             hintBtn.disabled = true;
             hintBtn.className = "px-5 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
 
@@ -817,8 +1030,8 @@
             document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-red-400";
 
             const checkActionNode = document.getElementById('check-btn');
-            checkActionNode.innerHTML = "下一題 ➔";
-            checkActionNode.className = "px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 font-black rounded-xl shadow-md border border-zinc-600 transition-colors uppercase tracking-wider text-sm";
+            checkActionNode.innerHTML = "下一題";
+            checkActionNode.className = "px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 font-black rounded-xl shadow-md border border-zinc-600 transition-colors uppercase tracking-wider text-sm mobile-next-btn-text";
             checkActionNode.onclick = stepForwardToNextLevelPattern;
             checkActionNode.disabled = false;
 
@@ -1115,8 +1328,8 @@
 
             if (answersAreValid) {
                 triggerSfxNotification(true); 
-                checkActionNode.innerHTML = "下一題 ➔";
-                checkActionNode.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-sm";
+                checkActionNode.innerHTML = "下一題";
+                checkActionNode.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-sm mobile-next-btn-text";
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
                 
                 document.getElementById('surrender-btn').disabled = true;
@@ -1186,7 +1399,7 @@
                 }
             } else if (selectedMode === 'hard') {
                 if (roundedScore <= 2) {
-                    textFeedbackNode.innerText = "狀況外的初學者？再多聽幾次看能不能跟上旋律吧！";
+                    textFeedbackNode.innerText = "狀況外的初學者？再多聽幾次看 Kremlin 能不能跟上旋律吧！";
                     textFeedbackNode.className = "text-zinc-400 font-medium text-center text-sm px-2 pt-2";
                 } else if (roundedScore === 3) {
                     textFeedbackNode.innerText = "看來你還是有點東西的。只有一點點。";
