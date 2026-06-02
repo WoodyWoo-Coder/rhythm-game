@@ -11,7 +11,7 @@
             width: 100%;
             height: 100%;
         }
-        /* Seamless Answer Grid Specfic Image Fitting */
+        /* Seamless Answer Grid Specific Image Fitting */
         .seamless-img {
             object-fit: fill !important;
             width: 100% !important;
@@ -19,25 +19,52 @@
             display: block;
         }
         
-        /* 6/7 Google Easter Egg Alternating Tilt Animation */
+        /* 6/7 Easter Egg Alternating Tilt Animation */
         @keyframes google67Tilt {
             0%, 100% { transform: rotate(0deg); }
-            10% { transform: rotate(3deg); }   /* Right side goes up, left goes down */
-            30% { transform: rotate(-3deg); }  /* Left side goes up, right goes down */
-            50% { transform: rotate(3deg); }   /* Right side goes up, left goes down */
-            70% { transform: rotate(-3deg); }  /* Left side goes up, right goes down */
-            90% { transform: rotate(3deg); }   /* Right side goes up, left goes down */
+            10% { transform: rotate(3deg); }   
+            30% { transform: rotate(-3deg); }  
+            50% { transform: rotate(3deg); }   
+            70% { transform: rotate(-3deg); }  
+            90% { transform: rotate(3deg); }   
         }
         .animate-67-meme {
             animation: google67Tilt 1.5s ease-in-out forwards;
             transform-origin: center center;
+        }
+
+        /* Mobile Layout & Layer Adjustments */
+        @media (max-width: 768px) {
+            /* Restructure the deck flow to keep a balanced landscape layout on phones */
+            #screen-3 {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem !important;
+                padding: 1rem !important;
+            }
+            /* Ensure images take up full slot area smoothly on mobile */
+            .mobile-padded-slot {
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+            }
+        }
+
+        /* High-priority overlay rule to ensure blue highlight stays on top of images */
+        .playback-highlight-overlay::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 4px solid #3b82f6 !important;
+            box-shadow: inset 0 0 0 4px #3b82f6 !important;
+            z-index: 30 !important;
+            pointer-events: none;
         }
     </style>
 </head>
 <body class="bg-zinc-900 text-zinc-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 select-none">
 
     <div id="screen-1" class="w-full max-w-3xl text-center py-12 px-6 bg-zinc-800 rounded-2xl border border-zinc-700 shadow-2xl space-y-8 block relative">
-        <div class="border-4 border-zinc-600 p-8 rounded-xl max-w-xl mx-auto bg-zinc-850">
+        <div class="border-4 border-zinc-600 p-8 rounded-xl max-w-xl mx-auto bg-zinc-855">
             <h1 class="text-4xl md:text-6xl font-black tracking-wider text-white">
                 節奏大挑戰
             </h1>
@@ -57,10 +84,10 @@
                 簡單模式
             </button>
             <button onclick="selectGameMode('hard')" id="mode-hard" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base">
-                困難模式
+                中等模式
             </button>
             <button onclick="selectGameMode('extreme')" id="mode-extreme" class="w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base">
-                極限模式
+                困難模式
             </button>
         </div>
 
@@ -81,11 +108,11 @@
             <div id="tutorial-page-1" class="space-y-4 text-sm text-zinc-300 leading-relaxed overflow-y-auto max-h-96 pr-1 block">
                 <div class="flex gap-3">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">1</span>
-                    <p><strong class="text-white">聆聽題目：</strong> 點擊頂部的 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">▶ 播放</span> 按鈕，系統會先進行 4 拍倒數，隨後播放正確的神秘節奏組合。</p>
+                    <p><strong class="text-white">聆聽題目：</strong> 點擊頂部的 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">▶ 播放</span> 按鈕，系統會先進行 4 拍倒數，随後播放正確的神秘節奏組合。</p>
                 </div>
                 <div class="flex gap-3">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">2</span>
-                    <p><strong class="text-white">依序填空：</strong> 觀察中間的節奏字卡圖形，直接點擊 them，即可將圖形依序填入下方的答題欄位空格中。</p>
+                    <p><strong class="text-white">依序填空：</strong> 觀察中間的節奏字卡圖形，直接點擊它們，即可將圖形依序填入下方的答題欄位空格中。</p>
                 </div>
                 <div class="flex gap-3">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">3</span>
@@ -93,27 +120,27 @@
                 </div>
                 <div class="flex gap-3">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">4</span>
-                    <p><strong class="text-white">送出檢查：</strong> 填滿所有空格後，點擊 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">✓ 檢查</span> 來核對答案。答對即可解鎖前往下一題！遇上難關時，也可以善用提示或放棄功能。</p>
+                    <p><strong class="text-white">送出檢查：</strong> 填滿所有空格後，點擊 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">✓ 檢查</span> 來核對答案。答對即可解鎖前往下一題！遇上難關時，也可以善用提示功能。</p>
                 </div>
             </div>
 
             <div id="tutorial-page-2" class="space-y-4 text-sm text-zinc-300 leading-relaxed overflow-y-auto max-h-96 pr-1 hidden">
                 <div class="space-y-2">
                     <h4 class="text-white font-bold border-l-2 border-blue-500 pl-2">🎵 (1) 如何調整節奏速度 (BPM)</h4>
-                    <p>在核心遊戲畫面的左上方控制面板中可以找到 <strong class="text-zinc-100">BPM</strong> 輸入欄位。您可以直接點擊輸入框鍵入數字、或者使用上下微調鍵。BPM 越高，節奏的播放速度就會越快！請注意，部分模式有最低速度的規則限制。</p>
+                    <p>在核心遊戲畫面的左上方控制面板中可以找到 <strong class="text-zinc-100">BPM</strong> 輸入欄位。您可以直接點擊輸入框鍵入數字、或者使用上下微調鍵。BPM 越高，節奏的播放速度就會越快！請注意，不同模式有不同的最低速度規則限制。</p>
                 </div>
                 
                 <div class="space-y-2">
                     <h4 class="text-white font-bold border-l-2 border-amber-500 pl-2">🤫 (2) 神祕彩蛋</h4>
-                    <p>聽說系統中隱藏了一個極度罕見的傳奇神秘迷因狀態……目前唯一能透露的線索是：<strong class="text-amber-400">這個彩蛋似乎只能在「簡單模式 (Easy Mode)」中被觸發</strong>。第一位成功發現、觸發並截圖回報的人，作者正在秘密籌備一份神祕大獎，趕緊去測試你的實力與運氣吧！</p>
+                    <p>聽說系統中隱藏了一個極度罕見的神秘彩蛋……目前唯一能透露的線索是：<strong class="text-amber-400">這個彩蛋 seems 只能在「簡單模式 (Easy Mode)」中被觸發</strong>。第一位成功發現、觸發並截圖回報的人，作者正在秘密籌備一份神祕大獎，趕緊去測試你的實力與運氣吧！</p>
                 </div>
 
                 <div class="space-y-2">
                     <h4 class="text-white font-bold border-l-2 border-emerald-500 pl-2">🎮 (3) 三大模式詳細規則差異</h4>
                     <ul class="list-disc pl-5 space-y-1 text-xs">
-                        <li><strong class="text-zinc-100">簡單模式：</strong> 共有 10 題。採用基礎 4 拍結構，支援無限次重複聆聽。提供貼心亮圈提示。</li>
-                        <li><strong class="text-zinc-100">困難模式：</strong> 縮減至 6 題。升級為 8 拍長度，BPM 限制 120-200。每題限聽 4次，關閉提示並替換為「放棄」功能。</li>
-                        <li><strong class="text-zinc-100">極限模式：</strong> 僅有 3 題。同樣為 8 拍長度，BPM 高速鎖定在 160-200。每題<strong class="text-red-400">嚴格限制只能聆聽 1 次</strong>，且完全隱藏音符視覺提示！</li>
+                        <li><strong class="text-zinc-100">簡單模式：</strong> 共有 7 題。採用基礎 4 拍結構，BPM 範圍 60-200。僅出現簡單音符 (圖 1-5)。播放次數無限制。</li>
+                        <li><strong class="text-zinc-100">中等模式：</strong> 共有 5 題。採用基礎 4 拍結構，BPM 範圍 90-200。混合 2 個簡單音符與 2 個進階音符 (圖 6-8)。每題限播 2 次。</li>
+                        <li><strong class="text-zinc-100">困難模式：</strong> 僅有 3 題。採用基礎 4 拍結構，BPM 範圍 120-200。包含 1 個簡單音符與 3 個進階音符 (圖 6-8)。每題限播 1 次。</li>
                     </ul>
                 </div>
             </div>
@@ -177,46 +204,52 @@
 
     <div id="screen-3" class="w-full max-w-5xl p-5 bg-zinc-950 rounded-2xl border border-zinc-800 shadow-2xl space-y-6 hidden">
         
-        <div class="flex flex-nowrap items-center justify-between gap-6 bg-zinc-900 p-4 rounded-xl border border-zinc-800 overflow-x-auto">
+        <div class="w-[95%] mx-auto flex flex-nowrap items-center justify-between gap-4 bg-zinc-900 p-3.5 rounded-xl border border-zinc-800 overflow-x-auto">
             
-            <div class="flex items-center gap-4 flex-shrink-0">
-                <button onclick="exitAndResetToMenu()" class="p-3.5 hover:bg-zinc-800 rounded-xl border border-zinc-700 transition-colors focus:outline-none bg-zinc-950/40 flex-shrink-0" title="離開並重設進度">
-                    <img src="exit.png" alt="Exit" class="w-7 h-7 invert brightness-200 object-contain">
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <button onclick="exitAndResetToMenu()" class="focus:outline-none flex-shrink-0" title="離開並重設進度">
+                    <img src="exit.png" alt="Exit" class="w-11 h-11 object-contain cursor-pointer">
                 </button>
 
-                <div class="flex items-center gap-3 bg-zinc-950/40 px-4 py-2.5 rounded-lg border border-zinc-800">
+                <div class="flex items-center gap-2.5 bg-zinc-950/40 px-3 py-2 rounded-lg border border-zinc-800">
                     <div class="flex flex-col items-center justify-center">
-                        <div class="flex items-center gap-3">
-                            <span class="text-base font-black text-zinc-300 tracking-wider">BPM</span>
-                            <input type="number" id="bpm-input" value="120" min="30" max="200" onchange="syncBpmValue(this.value)" class="w-22 bg-zinc-800 border border-zinc-600 rounded-lg p-2 text-center font-mono font-black text-lg text-white focus:outline-none focus:ring-2 focus:ring-zinc-500 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-black text-zinc-300 tracking-wider">BPM</span>
+                            <input type="number" id="bpm-input" value="120" min="30" max="200" onchange="syncBpmValue(this.value)" class="w-20 bg-zinc-800 border border-zinc-600 rounded-lg p-1.5 text-center font-mono font-black text-base text-white focus:outline-none focus:ring-2 focus:ring-zinc-500 disabled:opacity-40 disabled:cursor-not-allowed">
                         </div>
-                        <span id="bpm-range-indicator" class="text-xs text-zinc-400 font-bold mt-1 tracking-wide">(範圍: 30-200)</span>
+                        <span id="bpm-range-indicator" class="text-[10px] text-zinc-400 font-bold mt-0.5 tracking-wide">(範圍: 30-200)</span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3.5 flex-shrink-0">
-                <button onclick="startPrecIOuseAudioPlayback()" id="play-btn" class="px-7 py-3 rounded-xl text-base font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md">
-                    ▶ 播放
-                </button>
-                <button onclick="checkUserSubmission()" id="check-btn" class="px-7 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-base font-black text-zinc-200 transition-colors uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
-                    ✓ 檢查
-                </button>
-                <button onclick="handleHintOrGiveUpAction()" id="hint-btn" class="px-6 py-3 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-xl text-sm font-black text-amber-400 uppercase tracking-wider shadow-md">
-                    💡 提示
-                </button>
+            <div class="flex flex-col items-center gap-1 flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <button onclick="startPrecIOuseAudioPlayback()" id="play-btn" class="px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md">
+                        ▶ 播放
+                    </button>
+                    <button onclick="checkUserSubmission()" id="check-btn" class="px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-md">
+                        ✓ 檢查
+                    </button>
+                    <button onclick="activateHintTargetingMode()" id="hint-btn" class="px-5 py-2.5 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-xl text-xs font-black text-amber-400 uppercase tracking-wider shadow-md">
+                        💡 提示
+                    </button>
+                    <button onclick="triggerSurrenderReveal()" id="surrender-btn" class="px-5 py-2.5 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-xs font-black text-red-400 uppercase tracking-wider shadow-md">
+                        🏳️ 放棄
+                    </button>
+                </div>
+                <span id="playback-limit-label" class="text-[11px] text-zinc-400 font-semibold tracking-wide"></span>
             </div>
 
-            <div class="flex items-center gap-4 flex-shrink-0">
-                <div class="flex flex-col items-center justify-center bg-zinc-855 border-2 border-zinc-700 p-1.5 rounded-xl shadow-inner w-24 h-24 overflow-hidden" id="portrait-container">
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="flex flex-col items-center justify-center bg-zinc-855 border-2 border-zinc-700 p-1 rounded-xl shadow-inner w-20 h-20 overflow-hidden" id="portrait-container">
                     <img id="assistant-portrait-img" src="Assistant1_2.png" alt="Assistant Brian" class="w-full h-full object-cover">
                 </div>
 
-                <div class="flex items-center gap-2 font-mono bg-zinc-950 border border-zinc-850 px-4 py-3 rounded-xl shadow-inner text-sm">
-                    <span id="question-index-label" class="text-zinc-500 font-black tracking-tight mr-2 text-xs">Q1/10</span>
-                    <span class="text-zinc-500 font-black tracking-tight text-xs">SCORE</span>
-                    <span id="score-numerator" class="text-2xl font-black text-zinc-100">0</span>
-                    <span class="text-zinc-600 font-light text-base">/</span>
+                <div class="flex items-center gap-1.5 font-mono bg-zinc-950 border border-zinc-855 px-3 py-2.5 rounded-xl shadow-inner text-xs">
+                    <span id="question-index-label" class="text-zinc-500 font-black tracking-tight mr-1 text-[11px]">Q1/7</span>
+                    <span class="text-zinc-500 font-black tracking-tight text-[11px]">SCORE</span>
+                    <span id="score-numerator" class="text-xl font-black text-zinc-100">0</span>
+                    <span class="text-zinc-600 font-light text-sm">/</span>
                     <span id="score-denominator" class="text-sm font-black text-zinc-400">0</span>
                 </div>
             </div>
@@ -228,19 +261,19 @@
 
         <div class="space-y-3">
             <div class="flex justify-between items-center">
-                <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-500">基本節奏型態 (點擊卡片直接填入下方空格)</h4>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-500" id="pool-title-label">基本節奏型態 (點擊卡片直接填入下方空格)</h4>
             </div>
             <div class="grid grid-cols-4 sm:grid-cols-8 gap-3" id="clue-grid-target"></div>
         </div>
 
         <div class="pt-4 border-t border-zinc-900 space-y-2">
             <div class="flex justify-between items-end px-1">
-                <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-500">答題組合欄位 (Seamless Answer Grid)</h4>
+                <h4 class="text-xs font-bold uppercase tracking-widest text-zinc-500" id="answer-grid-title-label">答題組合欄位 (Seamless Answer Grid)</h4>
                 <button onclick="clearAllBlanks()" id="reset-blanks-btn" class="p-1 hover:bg-zinc-800 rounded transition-colors focus:outline-none" title="重設填空">
                     <img src="reset.png" alt="Reset" class="w-5 h-5 invert brightness-200 object-contain">
                 </button>
             </div>
-            <div class="grid p-0 bg-zinc-900 rounded-xl border border-zinc-800 shadow-inner gap-0 overflow-hidden" id="user-blanks-target"></div>
+            <div class="grid p-0 bg-zinc-900 rounded-xl border border-zinc-800 shadow-inner gap-0 grid-cols-4 overflow-hidden" id="user-blanks-target"></div>
         </div>
     </div>
 
@@ -250,11 +283,11 @@
                 🕵️‍♂️
             </div>
             <div class="space-y-2">
-                <h2 class="text-3xl font-black tracking-wide text-white bg-clip-text">恭喜發現隱藏彩蛋！</h2>
-                <p class="text-purple-300 font-bold text-sm tracking-wider uppercase">🎉 You Found the Google 6/7 Easter Egg 🎉</p>
+                <h2 class="text-3xl font-black tracking-wide text-white bg-clip-text">恭喜! 你找到了神祕彩蛋!</h2>
+                <p class="text-purple-300 font-bold text-sm tracking-wider uppercase">🎉 Secret Easter Egg Found 🎉</p>
             </div>
             <p class="text-zinc-400 text-xs leading-relaxed max-w-xs mx-auto">
-                你成功在簡單模式的第 7 題觸發了最頂級的傳奇評分迷因狀態！快趁現在<strong class="text-white">拍下完整螢幕畫面截圖</strong>回報給作者，抱回你的神祕大獎吧！
+                你成功在簡單模式的第 7 題觸發了最頂級的傳奇評分狀態！快趁現在<strong class="text-white">拍下完整螢幕畫面截圖</strong>回報給作者，抱回你的神祕大獎吧！
             </p>
             <div class="pt-2">
                 <button onclick="closeEasterEggModalAndContinue()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm rounded-xl tracking-wide transition-all shadow-lg border border-purple-400">
@@ -273,7 +306,7 @@
         <div class="bg-zinc-900 p-8 rounded-xl border border-zinc-800 max-w-md mx-auto space-y-4 shadow-inner">
             <div class="text-zinc-500 text-xs font-bold tracking-widest uppercase">最終得分成績</div>
             <div class="font-mono text-5xl font-black text-emerald-400">
-                <span id="final-score-correct">0</span> <span class="text-zinc-600 text-3xl font-light">/</span> <span id="final-score-total" class="text-zinc-400 text-3xl">10</span>
+                <span id="final-score-correct">0</span> <span class="text-zinc-600 text-3xl font-light">/</span> <span id="final-score-total" class="text-zinc-400 text-3xl">7</span>
             </div>
             <p id="final-feedback-text" class="text-zinc-300 font-medium px-2 pt-2 text-sm leading-relaxed"></p>
         </div>
@@ -311,12 +344,10 @@
         };
 
         let selectedMode = 'easy'; 
-        let maxQuestions = 10;
-        let totalBlocks = 4;
-        let playbackCountThisQuestion = 0;
-        let maxPlaybacksAllowed = Infinity;
+        let maxQuestions = 7;
+        let totalBlocks = 4; 
 
-        let activeBpmValue = 120;
+        let activeBpmValue = 60;
         let playbackActive = false;
         let visualTimerRefs = []; 
 
@@ -325,17 +356,18 @@
         let dynamicTotalAttemptsCount = 0; 
         let hasAttemptedCurrentQuestion = false; 
         let hintUsedForCurrentQuestion = false;
-        let hasGivenUpCurrentQuestion = false;
+        let surrenderStateActive = false;
 
-        let hintClickCounter = 0;
+        let remainingPlaybackTimes = -1; 
+
         let secretLevelTargetPattern = []; 
         let currentAnswersState = [];
         let lockedBlanksMask = [];
 
+        let hintTargetingModeActive = false; 
         let evaluationStateTriggered = false;
         let activeTutorialStep = 1;
 
-        // Multi-page Modal Pagination Functionality
         function toggleTutorialModal(show) {
             const modal = document.getElementById('tutorial-modal');
             if (show) {
@@ -379,7 +411,6 @@
             }
         }
 
-        // Shifts active instrument emoji indicator down to the green layout area
         function syncInstrumentIconDisplay() {
             const selectedVal = document.getElementById('synth-type').value;
             const outputElement = document.getElementById('instrument-icon-output');
@@ -419,22 +450,19 @@
 
             if(mode === 'easy') {
                 easyBtn.className = "w-full py-4 rounded-xl font-bold border-2 border-zinc-100 bg-zinc-100 text-zinc-900 shadow-xl transition-all scale-105";
-                maxQuestions = 10;
+                maxQuestions = 7;
                 totalBlocks = 4;
-                maxPlaybacksAllowed = Infinity;
-                activeBpmValue = 120;
+                activeBpmValue = 60;
             } else if(mode === 'hard') {
                 hardBtn.className = "w-full py-4 rounded-xl font-bold border-2 border-zinc-100 bg-zinc-100 text-zinc-900 shadow-xl transition-all scale-105";
-                maxQuestions = 6;
-                totalBlocks = 8;
-                maxPlaybacksAllowed = 4; 
-                activeBpmValue = 120;
+                maxQuestions = 5;
+                totalBlocks = 4;
+                activeBpmValue = 90;
             } else if(mode === 'extreme') {
                 extremeBtn.className = "w-full py-4 rounded-xl font-bold border-2 border-zinc-100 bg-zinc-100 text-zinc-900 shadow-xl transition-all scale-105";
                 maxQuestions = 3;
-                totalBlocks = 8;
-                maxPlaybacksAllowed = 1;
-                activeBpmValue = 160;
+                totalBlocks = 4;
+                activeBpmValue = 120;
             }
 
             const startContainer = document.getElementById('start-game-container');
@@ -442,13 +470,24 @@
             startContainer.classList.add('opacity-100', 'max-h-24');
         }
 
+        function initAudioContextContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
         function advanceToScreen2() {
+            initAudioContextContext();
             document.getElementById('screen-1').classList.replace('block', 'hidden');
             document.getElementById('screen-2').classList.replace('hidden', 'block');
             syncInstrumentIconDisplay(); 
         }
 
         function advanceToGameplayDeck() {
+            initAudioContextContext();
             document.getElementById('screen-2').classList.replace('block', 'hidden');
             document.getElementById('screen-3').classList.replace('hidden', 'block');
             
@@ -459,29 +498,21 @@
             document.getElementById('score-numerator').innerText = "0";
             document.getElementById('score-denominator').innerText = "0";
 
-            const blanksGrid = document.getElementById('user-blanks-target');
-            if (totalBlocks === 8) {
-                blanksGrid.className = "grid p-0 bg-zinc-900 rounded-xl border border-zinc-800 shadow-inner gap-0 grid-cols-8 overflow-hidden";
-                
-                if (selectedMode === 'extreme') {
-                    document.getElementById('bpm-input').value = 160;
-                    document.getElementById('bpm-input').min = 160;
-                    document.getElementById('bpm-range-indicator').innerText = "(範圍: 160-200)";
-                } else {
-                    document.getElementById('bpm-input').value = 120;
-                    document.getElementById('bpm-input').min = 120;
-                    document.getElementById('bpm-range-indicator').innerText = "(範圍: 120-200)";
-                }
-                
-                document.getElementById('hint-btn').innerHTML = "<span class='text-lg mr-1'>🏳️</span>放棄";
-                document.getElementById('hint-btn').className = "px-6 py-3 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-sm font-black text-red-400 flex items-center justify-center uppercase tracking-wider shadow-md";
-            } else {
-                blanksGrid.className = "grid p-0 bg-zinc-900 rounded-xl border border-zinc-800 shadow-inner gap-0 grid-cols-4 overflow-hidden";
-                document.getElementById('bpm-input').value = 120;
-                document.getElementById('bpm-input').min = 30;
-                document.getElementById('bpm-range-indicator').innerText = "(範圍: 30-200)";
-                document.getElementById('hint-btn').innerHTML = "💡 提示";
-                document.getElementById('hint-btn').className = "px-6 py-3 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-xl text-sm font-black text-amber-400 uppercase tracking-wider shadow-md";
+            const bpmInput = document.getElementById('bpm-input');
+            const rangeIndicator = document.getElementById('bpm-range-indicator');
+
+            if (selectedMode === 'easy') {
+                bpmInput.value = 60;
+                bpmInput.min = 60;
+                rangeIndicator.innerText = "(範圍: 60-200)";
+            } else if (selectedMode === 'hard') {
+                bpmInput.value = 90;
+                bpmInput.min = 90;
+                rangeIndicator.innerText = "(範圍: 90-200)";
+            } else if (selectedMode === 'extreme') {
+                bpmInput.value = 120;
+                bpmInput.min = 120;
+                rangeIndicator.innerText = "(範圍: 120-200)";
             }
 
             generateRandomLevelGoal();
@@ -489,29 +520,88 @@
         }
 
         function generateRandomLevelGoal() {
-            secretLevelTargetPattern = [];
+            let pool1To5 = [1, 2, 3, 4, 5];
+            let pool6To8 = [6, 7, 8];
+            let generatedSuccessfully = false;
+
+            while (!generatedSuccessfully) {
+                secretLevelTargetPattern = [];
+                
+                if (selectedMode === 'easy') {
+                    for (let i = 0; i < 4; i++) {
+                        let randVal = pool1To5[Math.floor(Math.random() * pool1To5.length)];
+                        secretLevelTargetPattern.push(randVal);
+                    }
+                } else if (selectedMode === 'hard') {
+                    let assignments = [
+                        pool1To5[Math.floor(Math.random() * pool1To5.length)],
+                        pool1To5[Math.floor(Math.random() * pool1To5.length)],
+                        pool6To8[Math.floor(Math.random() * pool6To8.length)],
+                        pool6To8[Math.floor(Math.random() * pool6To8.length)]
+                    ];
+                    assignments.sort(() => Math.random() - 0.5);
+                    secretLevelTargetPattern = assignments;
+                } else if (selectedMode === 'extreme') {
+                    let assignments = [
+                        pool1To5[Math.floor(Math.random() * pool1To5.length)],
+                        pool6To8[Math.floor(Math.random() * pool6To8.length)],
+                        pool6To8[Math.floor(Math.random() * pool6To8.length)],
+                        pool6To8[Math.floor(Math.random() * pool6To8.length)]
+                    ];
+                    assignments.sort(() => Math.random() - 0.5);
+                    secretLevelTargetPattern = assignments;
+                }
+
+                let uniqueCheckSet = new Set(secretLevelTargetPattern);
+                if (uniqueCheckSet.size >= 3) {
+                    generatedSuccessfully = true;
+                }
+            }
+
             currentAnswersState = [];
             lockedBlanksMask = [];
-            playbackCountThisQuestion = 0;
+            hasAttemptedCurrentQuestion = false; 
+            surrenderStateActive = false;
 
-            for(let i=0; i<totalBlocks; i++) {
-                secretLevelTargetPattern.push(Math.floor(Math.random() * 8) + 1);
+            if (selectedMode === 'easy') {
+                remainingPlaybackTimes = -1; 
+            } else if (selectedMode === 'hard') {
+                remainingPlaybackTimes = 2;
+            } else if (selectedMode === 'extreme') {
+                remainingPlaybackTimes = 1;
+            }
+
+            for(let i=0; i<4; i++) {
                 currentAnswersState.push(null);
                 lockedBlanksMask.push(false);
             }
 
-            hintClickCounter = 0; 
-            hasAttemptedCurrentQuestion = false; 
             hintUsedForCurrentQuestion = false;
-            hasGivenUpCurrentQuestion = false;
+            hintTargetingModeActive = false;
             evaluationStateTriggered = false; 
 
             document.getElementById('question-index-label').innerText = `Q${totalQuestionsProcessed}/${maxQuestions}`;
             
+            const playButtonNode = document.getElementById('play-btn');
+            playButtonNode.disabled = false;
+            playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+            playButtonNode.innerHTML = "▶ 播放";
+
             updateAssistantExpression('neutral');
+            updatePlaybackCountDisplay();
             enableAllInteractionControls();
             buildUserBlanks();
-            updatePlayButtonText();
+        }
+
+        function updatePlaybackCountDisplay() {
+            const indicatorNode = document.getElementById('playback-limit-label');
+            if (remainingPlaybackTimes === -1) {
+                indicatorNode.innerText = "播放次數：無限制";
+                indicatorNode.className = "text-[11px] text-emerald-400 font-bold tracking-wide";
+            } else {
+                indicatorNode.innerText = `剩餘播放次數：${remainingPlaybackTimes} 次`;
+                indicatorNode.className = remainingPlaybackTimes > 0 ? "text-[11px] text-amber-400 font-bold tracking-wide" : "text-[11px] text-red-500 font-black tracking-wide";
+            }
         }
 
         function buildClueGrid() {
@@ -521,12 +611,14 @@
             for(let i = 1; i <= 8; i++) {
                 const elementBox = document.createElement('div');
                 elementBox.id = `clue-node-${i}`;
-                elementBox.onclick = () => { autoAssignRhythmToBlank(i); };
+                elementBox.onclick = () => { 
+                    if (!hintTargetingModeActive && !surrenderStateActive) autoAssignRhythmToBlank(i); 
+                };
                 elementBox.className = "cursor-pointer aspect-square flex flex-col bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden hover:border-zinc-500 transition-all duration-100 group";
                 elementBox.innerHTML = `
                     <div class="text-[10px] text-center bg-zinc-800 py-1 text-zinc-400 font-bold border-b border-zinc-700 group-hover:bg-zinc-700 transition-colors">圖${i}</div>
                     <div class="relative flex-1 bg-white flex items-center justify-center p-2 min-h-0">
-                        <img src="${i}.jpg" alt="Rhythm step pattern" class="rhythm-asset-img" onerror="brokenAssetFallbackHandler(this, ${i})"/>
+                        <img src="${i}.jpg" alt="Rhythm step pattern" class="rhythm-asset-img" onerror="brokenAssetFallbackHandler(this, i)"/>
                     </div>
                 `;
                 container.appendChild(elementBox);
@@ -537,28 +629,40 @@
             const container = document.getElementById('user-blanks-target');
             container.innerHTML = '';
 
-            for (let idx = 0; idx < totalBlocks; idx++) {
+            for (let idx = 0; idx < 4; idx++) {
                 const beatFileId = currentAnswersState[idx];
                 const blockFrame = document.createElement('div');
                 blockFrame.id = `blank-node-${idx}`;
-                blockFrame.onclick = () => { removeSelectedBlankValue(idx); };
+                
+                blockFrame.onclick = () => { 
+                    if (surrenderStateActive) return; 
+                    if (hintTargetingModeActive) {
+                        lockSingleTargetedHintBlank(idx);
+                    } else {
+                        removeSelectedBlankValue(idx); 
+                    }
+                };
                 
                 const isLocked = lockedBlanksMask[idx];
                 
+                let highlightBg = "bg-zinc-950/60 hover:bg-zinc-900/40";
+                if (beatFileId !== null) {
+                    highlightBg = (isLocked || surrenderStateActive) ? "bg-amber-600/10 border-amber-500" : "bg-white";
+                }
+
+                let hintPulseClass = (hintTargetingModeActive && !isLocked) ? "animate-pulse border-amber-500 bg-amber-950/20 ring-4 ring-amber-500/30" : "border-transparent";
+                
+                blockFrame.className = `cursor-pointer aspect-[4/3] ${highlightBg} flex flex-col items-center justify-center transition-all overflow-hidden border border-zinc-800 relative mobile-padded-slot`;
+                
                 if (beatFileId === null) {
-                    blockFrame.className = `cursor-pointer aspect-[4/3] bg-zinc-950/60 flex flex-col items-center justify-center transition-all hover:bg-zinc-900/40 border-2 border-transparent relative`;
                     blockFrame.innerHTML = `
-                        <span class="text-[10px] font-black text-zinc-700 uppercase tracking-widest">B${idx + 1}</span>
+                        <span class="text-[10px] font-black ${hintTargetingModeActive ? 'text-amber-400' : 'text-zinc-600'} uppercase tracking-widest">
+                            ${hintTargetingModeActive ? '✨ 點擊解鎖' : `B${idx + 1}`}
+                        </span>
                     `;
                 } else {
-                    const highlightBg = isLocked ? "bg-amber-600/10" : "bg-white";
-                    blockFrame.className = `cursor-pointer aspect-[4/3] ${highlightBg} flex flex-col items-center justify-center transition-all overflow-hidden border-2 border-transparent relative`;
-                    
                     blockFrame.innerHTML = `
-                        <div class="absolute top-0 inset-x-0 text-center text-[8px] bg-zinc-800/80 text-zinc-400 font-bold py-0.5 tracking-tighter z-20">
-                            ${isLocked ? '🔒' : ''} Blank ${idx + 1}
-                        </div>
-                        <div class="w-full h-full flex items-center justify-center bg-white pt-3 pb-1 px-1">
+                        <div class="w-full h-full flex items-center justify-center bg-white pt-0 pb-0 px-1">
                             <img src="${beatFileId}.jpg" alt="Active rhythm assignment block" class="seamless-img" onerror="brokenAssetFallbackHandler(this, ${beatFileId})"/>
                         </div>
                     `;
@@ -568,12 +672,10 @@
         }
 
         function autoAssignRhythmToBlank(rhythmId) {
-            if (hasGivenUpCurrentQuestion) return;
-
             let placedIndex = -1;
             let totalFilledCount = 0;
 
-            for(let i=0; i<totalBlocks; i++) {
+            for(let i=0; i<4; i++) {
                 if(currentAnswersState[i] !== null) {
                     totalFilledCount++;
                 }
@@ -582,16 +684,14 @@
                 }
             }
 
-            if (totalFilledCount === totalBlocks) {
-                return;
-            }
+            if (totalFilledCount === 4) return;
 
             if (placedIndex !== -1) {
                 currentAnswersState[placedIndex] = rhythmId;
                 buildUserBlanks();
             } else {
                 let overrideIndex = -1;
-                for(let i=0; i<totalBlocks; i++) {
+                for(let i=0; i<4; i++) {
                     if(!lockedBlanksMask[i]) {
                         overrideIndex = i;
                         break;
@@ -605,14 +705,13 @@
         }
 
         function removeSelectedBlankValue(idx) {
-            if(lockedBlanksMask[idx] || hasGivenUpCurrentQuestion) return;
+            if(lockedBlanksMask[idx]) return;
             currentAnswersState[idx] = null;
             buildUserBlanks();
         }
 
         function clearAllBlanks() {
-            if(hasGivenUpCurrentQuestion) return;
-            for(let i=0; i<totalBlocks; i++) {
+            for(let i=0; i<4; i++) {
                 if(!lockedBlanksMask[i]) {
                     currentAnswersState[i] = null;
                 }
@@ -628,111 +727,146 @@
             imgTag.parentNode.appendChild(fallbackInfo);
         }
 
-        function handleHintOrGiveUpAction() {
-            if (selectedMode === 'easy') {
-                triggerProgressiveHint();
-            } else {
-                triggerGiveUpMechanic();
-            }
-        }
-
-        function triggerProgressiveHint() {
+        function activateHintTargetingMode() {
+            if (hintUsedForCurrentQuestion || surrenderStateActive) return;
+            
+            hintTargetingModeActive = true;
             hintUsedForCurrentQuestion = true;
 
-            if (hintClickCounter < 4) {
-                currentAnswersState[hintClickCounter] = secretLevelTargetPattern[hintClickCounter];
-                lockedBlanksMask[hintClickCounter] = true;
-                hintClickCounter++;
-                buildUserBlanks();
+            document.getElementById('pool-title-label').innerText = "⚠️ [提示模式中] 上方卡片已暫時停用";
+            document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-amber-500 animate-pulse";
+            document.getElementById('answer-grid-title-label').innerText = "👉 請直接點擊下方其中一個空格來置入正確答案";
+            document.getElementById('answer-grid-title-label').className = "text-xs font-bold uppercase tracking-widest text-amber-400";
 
-                if (hintClickCounter === 4) {
-                    lockEverythingForFourHintsMode();
-                }
-            }
-        }
-
-        function lockEverythingForFourHintsMode() {
-            hintUsedForCurrentQuestion = true;
-
-            if(!hasAttemptedCurrentQuestion) {
-                hasAttemptedCurrentQuestion = true;
-                dynamicTotalAttemptsCount++;
-                document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
-                
-                let oldCorrectValue = dynamicCorrectCount;
-                dynamicCorrectCount += 0.5;
-                updateUINumeratorDisplay();
-                
-                evaluateMemeConditionState(oldCorrectValue);
-            }
-
-            const checkActionNode = document.getElementById('check-btn');
-            checkActionNode.innerHTML = "下一題 ➔";
-            checkActionNode.className = "px-7 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-base";
-            checkActionNode.onclick = stepForwardToNextLevelPattern;
-            checkActionNode.disabled = false;
-
-            document.getElementById('hint-btn').disabled = true;
-            document.getElementById('hint-btn').className = "px-6 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-sm font-bold text-zinc-600 cursor-not-allowed opacity-30";
-            
-            document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
-        }
-
-        function triggerGiveUpMechanic() {
-            hasGivenUpCurrentQuestion = true;
-            
-            for (let i = 0; i < totalBlocks; i++) {
-                currentAnswersState[i] = secretLevelTargetPattern[i];
-                lockedBlanksMask[i] = true;
-            }
-            buildUserBlanks();
-
-            if(!hasAttemptedCurrentQuestion) {
-                hasAttemptedCurrentQuestion = true;
-                dynamicTotalAttemptsCount++;
-                document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
-            }
-
-            document.getElementById('hint-btn').disabled = true;
-            document.getElementById('hint-btn').className = "px-6 py-3 bg-zinc-800 border border-zinc-700 rounded-xl text-sm font-bold text-zinc-600 cursor-not-allowed opacity-30";
-            document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
             document.getElementById('play-btn').disabled = true;
-            document.getElementById('play-btn').className = "px-7 py-3 rounded-xl text-base font-bold bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
+            document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
+            document.getElementById('check-btn').disabled = true;
+            document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
+            document.getElementById('surrender-btn').disabled = true;
+            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
+            document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
+            document.getElementById('bpm-input').disabled = true;
+
+            const hintBtn = document.getElementById('hint-btn');
+            hintBtn.innerText = "✨ 請選擇欄位...";
+            hintBtn.disabled = true;
+            hintBtn.className = "px-5 py-2.5 bg-amber-600 border border-amber-400 rounded-xl text-xs font-black text-white animate-pulse shadow-md";
+
+            buildUserBlanks();
+        }
+
+        function lockSingleTargetedHintBlank(idx) {
+            currentAnswersState[idx] = secretLevelTargetPattern[idx];
+            lockedBlanksMask[idx] = true;
+            hintTargetingModeActive = false;
+
+            document.getElementById('pool-title-label').innerText = "基本節奏型態 (點擊卡片直接填入下方空格)";
+            document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-zinc-500";
+            document.getElementById('answer-grid-title-label').innerText = "答題組合欄位 (Seamless Answer Grid)";
+            document.getElementById('answer-grid-title-label').className = "text-xs font-bold uppercase tracking-widest text-zinc-500";
+
+            if (remainingPlaybackTimes === 0) {
+                disablePlaybackKeyPermanently();
+            } else {
+                document.getElementById('play-btn').disabled = false;
+                document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+            }
+            
+            document.getElementById('check-btn').disabled = false;
+            document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+            document.getElementById('surrender-btn').disabled = false;
+            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-xs font-black text-red-400 uppercase tracking-wider shadow-md";
+            document.getElementById('reset-blanks-btn').className = "p-1 hover:bg-zinc-800 rounded transition-colors focus:outline-none";
+            document.getElementById('bpm-input').disabled = false;
+
+            const hintBtn = document.getElementById('hint-btn');
+            hintBtn.innerText = "❌ 提示已使用";
+            hintBtn.disabled = true;
+            hintBtn.className = "px-5 py-2.5 bg-zinc-800 border border-zinc-700 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+
+            buildUserBlanks();
+        }
+
+        function triggerSurrenderReveal() {
+            if (surrenderStateActive) return;
+            surrenderStateActive = true;
+
+            for (let i = 0; i < 4; i++) {
+                currentAnswersState[i] = secretLevelTargetPattern[i];
+            }
+
+            if (!hasAttemptedCurrentQuestion) {
+                hasAttemptedCurrentQuestion = true;
+                dynamicTotalAttemptsCount++;
+                document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
+            }
+
+            document.getElementById('play-btn').disabled = true;
+            document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
+            
+            document.getElementById('hint-btn').disabled = true;
+            document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+            
+            document.getElementById('surrender-btn').disabled = true;
+            document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 rounded-xl text-xs font-bold text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
+            
+            document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
+            document.getElementById('bpm-input').disabled = true;
+
+            document.getElementById('pool-title-label').innerText = "🏳️ [已放棄此題] 答案已自動公布";
+            document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-red-400";
 
             const checkActionNode = document.getElementById('check-btn');
             checkActionNode.innerHTML = "下一題 ➔";
-            checkActionNode.className = "px-7 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-base";
+            checkActionNode.className = "px-6 py-2.5 bg-zinc-700 hover:bg-zinc-600 text-zinc-200 font-black rounded-xl shadow-md border border-zinc-600 transition-colors uppercase tracking-wider text-sm";
             checkActionNode.onclick = stepForwardToNextLevelPattern;
             checkActionNode.disabled = false;
 
             updateAssistantExpression('sad');
-            triggerSfxNotification(false); 
+            triggerSfxNotification(false);
+            buildUserBlanks();
         }
 
         function enableAllInteractionControls() {
             const checkActionNode = document.getElementById('check-btn');
             checkActionNode.innerHTML = "✓ 檢查";
-            checkActionNode.className = "px-7 py-3 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-base font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+            checkActionNode.className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
             checkActionNode.onclick = checkUserSubmission;
             checkActionNode.disabled = false;
 
             const hintBtn = document.getElementById('hint-btn');
             hintBtn.disabled = false;
-            if (selectedMode !== 'easy') {
-                hintBtn.innerHTML = "<span class='text-lg mr-1'>🏳️</span>放棄";
-                hintBtn.className = "px-6 py-3 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-sm font-black text-red-400 flex items-center justify-center uppercase tracking-wider shadow-md";
-            } else {
-                hintBtn.innerHTML = "💡 提示";
-                hintBtn.className = "px-6 py-3 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-xl text-sm font-black text-amber-400 uppercase tracking-wider shadow-md";
-            }
+            hintBtn.innerHTML = "💡 提示";
+            hintBtn.className = "px-5 py-2.5 bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/40 rounded-xl text-xs font-black text-amber-400 uppercase tracking-wider shadow-md";
+
+            const surrenderBtn = document.getElementById('surrender-btn');
+            surrenderBtn.disabled = false;
+            surrenderBtn.innerHTML = "🏳️ 放棄";
+            surrenderBtn.className = "px-5 py-2.5 bg-red-600/20 hover:bg-red-600/40 border border-red-500/40 rounded-xl text-xs font-black text-red-400 uppercase tracking-wider shadow-md";
 
             document.getElementById('reset-blanks-btn').className = "p-1 hover:bg-zinc-800 rounded transition-colors focus:outline-none";
             document.getElementById('bpm-input').disabled = false;
-            document.getElementById('play-btn').disabled = false;
+            
+            document.getElementById('pool-title-label').innerText = "基本節奏型態 (點擊卡片直接填入下方空格)";
+            document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-zinc-500";
+            
+            if (remainingPlaybackTimes !== 0) {
+                document.getElementById('play-btn').disabled = false;
+                document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+            } else {
+                disablePlaybackKeyPermanently();
+            }
+        }
+
+        function disablePlaybackKeyPermanently() {
+            const playButtonNode = document.getElementById('play-btn');
+            playButtonNode.disabled = true;
+            playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-40 shadow-none";
+            playButtonNode.innerHTML = "❌ 次數用盡";
         }
 
         function syncBpmValue(rawInput) {
-            let minVal = (selectedMode === 'extreme') ? 160 : (selectedMode === 'hard' ? 120 : 30);
+            let minVal = (selectedMode === 'easy') ? 60 : (selectedMode === 'hard' ? 90 : 120);
             activeBpmValue = Math.max(minVal, Math.min(200, Number(rawInput)));
             document.getElementById('bpm-input').value = activeBpmValue;
         }
@@ -741,37 +875,25 @@
             document.getElementById('score-numerator').innerText = Number.isInteger(dynamicCorrectCount) ? dynamicCorrectCount : dynamicCorrectCount.toFixed(1);
         }
 
-        function updatePlayButtonText() {
-            const playButtonNode = document.getElementById('play-btn');
-            if (selectedMode !== 'easy') {
-                let remaining = maxPlaybacksAllowed - playbackCountThisQuestion;
-                playButtonNode.innerHTML = `▶ 播放 (${remaining})`;
-                if (remaining <= 0) {
-                    playButtonNode.disabled = true;
-                    playButtonNode.className = "px-7 py-3 rounded-xl text-base font-bold bg-zinc-800 border border-zinc-700 text-zinc-600 cursor-not-allowed opacity-30 uppercase tracking-wider";
-                } else {
-                    playButtonNode.className = "px-7 py-3 rounded-xl text-base font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
-                }
-            } else {
-                playButtonNode.innerHTML = "▶ 播放";
-                playButtonNode.className = "px-7 py-3 rounded-xl text-base font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
-            }
-        }
-
         function startPrecIOuseAudioPlayback() {
             if (playbackActive) return;
-            if (selectedMode !== 'easy' && playbackCountThisQuestion >= maxPlaybacksAllowed) return;
+            if (remainingPlaybackTimes === 0) return; 
 
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            initAudioContextContext();
             
             playbackActive = true;
-            playbackCountThisQuestion++;
+
+            if (remainingPlaybackTimes > 0) {
+                remainingPlaybackTimes--;
+                updatePlaybackCountDisplay();
+            }
             
             document.getElementById('bpm-input').disabled = true;
             document.getElementById('check-btn').disabled = true;
+            document.getElementById('surrender-btn').disabled = true;
 
             const playButtonNode = document.getElementById('play-btn');
-            playButtonNode.className = "px-7 py-3 rounded-xl text-base font-black bg-blue-600 border border-blue-500 text-white animate-pulse uppercase tracking-wider cursor-not-allowed shadow-md";
+            playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-blue-600 border border-blue-500 text-white animate-pulse uppercase tracking-wider cursor-not-allowed shadow-md";
             playButtonNode.innerHTML = "⏳ 播放中";
 
             const banner = document.getElementById('countdown-banner');
@@ -800,7 +922,7 @@
             }, (sequenceStartTime - audioCtx.currentTime) * 1000);
             visualTimerRefs.push(hideBannerRef);
 
-            let totalSubbeats = totalBlocks * 4;
+            let totalSubbeats = 4 * 4; 
 
             for (let tick = 0; tick < totalSubbeats; tick++) {
                 const noteScheduledTime = sequenceStartTime + (tick * subbeatDuration);
@@ -814,13 +936,13 @@
                     scheduleInstrumentSound(noteScheduledTime);
                 }
 
-                let highlightRef = setTimeout(() => {
-                    removeVisualHighlights();
-                    if (selectedMode !== 'extreme') {
+                if (selectedMode === 'easy' || selectedMode === 'hard') {
+                    let highlightRef = setTimeout(() => {
+                        removeVisualHighlights();
                         applyVisualHighlight(patternIdx);
-                    }
-                }, (noteScheduledTime - audioCtx.currentTime) * 1000);
-                visualTimerRefs.push(highlightRef);
+                    }, (noteScheduledTime - audioCtx.currentTime) * 1000);
+                    visualTimerRefs.push(highlightRef);
+                }
             }
 
             const totalDurationMs = (sequenceStartTime + (totalSubbeats * subbeatDuration) - audioCtx.currentTime) * 1000;
@@ -830,8 +952,14 @@
                 
                 document.getElementById('bpm-input').disabled = false;
                 document.getElementById('check-btn').disabled = false;
+                document.getElementById('surrender-btn').disabled = false;
 
-                updatePlayButtonText();
+                if (remainingPlaybackTimes === 0) {
+                    disablePlaybackKeyPermanently();
+                } else {
+                    playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-zinc-100 border border-white text-zinc-900 hover:bg-zinc-200 transition-colors uppercase tracking-wider shadow-md";
+                    playButtonNode.innerHTML = "▶ 播放";
+                }
             }, totalDurationMs);
             visualTimerRefs.push(endRef);
         }
@@ -904,7 +1032,7 @@
         }
 
         function triggerSfxNotification(isCorrect) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            initAudioContextContext();
             const now = audioCtx.currentTime;
 
             if (isCorrect) {
@@ -939,23 +1067,21 @@
         function applyVisualHighlight(patternIdx) {
             const activeBlankFrame = document.getElementById(`blank-node-${patternIdx}`);
             if (activeBlankFrame) {
-                activeBlankFrame.classList.replace("border-transparent", "border-blue-500");
-                activeBlankFrame.classList.add("z-10");
+                activeBlankFrame.className += " playback-highlight-overlay";
             }
         }
 
         function removeVisualHighlights() {
-            for(let i=0; i<totalBlocks; i++) {
+            for(let i=0; i<4; i++) {
                 const frame = document.getElementById(`blank-node-${i}`);
                 if(frame) {
-                    frame.classList.replace("border-blue-500", "border-transparent");
-                    frame.classList.remove("z-10");
+                    frame.classList.remove("playback-highlight-overlay");
                 }
             }
         }
 
         function checkUserSubmission() {
-            for (let i = 0; i < totalBlocks; i++) {
+            for (let i = 0; i < 4; i++) {
                 if (currentAnswersState[i] === null) {
                     updateAssistantExpression('warn');
                     return; 
@@ -963,7 +1089,7 @@
             }
 
             let answersAreValid = true;
-            for (let i = 0; i < totalBlocks; i++) {
+            for (let i = 0; i < 4; i++) {
                 if (currentAnswersState[i] !== secretLevelTargetPattern[i]) {
                     answersAreValid = false;
                 }
@@ -990,9 +1116,12 @@
             if (answersAreValid) {
                 triggerSfxNotification(true); 
                 checkActionNode.innerHTML = "下一題 ➔";
-                checkActionNode.className = "px-7 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-base";
+                checkActionNode.className = "px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-md border border-emerald-400 transition-colors uppercase tracking-wider text-sm";
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
                 
+                document.getElementById('surrender-btn').disabled = true;
+                document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
+
                 updateAssistantExpression('happy');
             } else {
                 triggerSfxNotification(false); 
@@ -1000,17 +1129,14 @@
             }
         }
 
-        // Handles the real alternating pivot tilt meme behavior + screenshot pop-up screen
         function evaluateMemeConditionState(previousCorrectScore) {
             const gameDeck = document.getElementById('screen-3');
             
             if (selectedMode === 'easy' && totalQuestionsProcessed === 7 && dynamicCorrectCount === 6) {
-                // Triggers alternating tilt for exactly 5 cycles over 1.5 seconds
-                gameDeck.classList.add('animate-67-meme');
+                gameDeck.className += ' animate-67-meme';
                 
                 setTimeout(() => {
                     gameDeck.classList.remove('animate-67-meme');
-                    // Reveal the screenshot congratulatory pop-up modal right after it stops tilting
                     document.getElementById('easter-egg-modal').classList.remove('hidden');
                 }, 1500);
             } else {
@@ -1025,12 +1151,6 @@
         function stepForwardToNextLevelPattern() {
             visualTimerRefs.forEach(clearTimeout);
             visualTimerRefs = [];
-
-            if (!hasAttemptedCurrentQuestion) {
-                hasAttemptedCurrentQuestion = true;
-                dynamicTotalAttemptsCount++;
-                document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
-            }
 
             if (totalQuestionsProcessed >= maxQuestions) {
                 displayScreen4SummaryRecap();
@@ -1054,10 +1174,10 @@
             const roundedScore = Math.floor(dynamicCorrectCount);
 
             if (selectedMode === 'easy') {
-                if (dynamicCorrectCount >= 8) {
+                if (dynamicCorrectCount >= 6) {
                     textFeedbackNode.innerText = "太厲害了！你的節奏感完美無瑕，簡真就是行走的節拍器！祝賀你完成挑戰！ 🎉";
                     textFeedbackNode.className = "text-emerald-400 font-bold text-center text-sm px-2 pt-2";
-                } else if (dynamicCorrectCount >= 5) {
+                } else if (dynamicCorrectCount >= 3) {
                     textFeedbackNode.innerText = "表現得不錯！你已經掌握了基本的節奏型態，再加把勁下次就能拿到滿分囉！ 👍";
                     textFeedbackNode.className = "text-amber-400 font-medium text-center text-sm px-2 pt-2";
                 } else {
@@ -1066,30 +1186,30 @@
                 }
             } else if (selectedMode === 'hard') {
                 if (roundedScore <= 2) {
-                    textFeedbackNode.innerText = "再加油! 你可以更好的";
+                    textFeedbackNode.innerText = "狀況外的初學者？再多聽幾次看能不能跟上旋律吧！";
                     textFeedbackNode.className = "text-zinc-400 font-medium text-center text-sm px-2 pt-2";
                 } else if (roundedScore === 3) {
-                    textFeedbackNode.innerText = "看來你還是有點東西的。只有一點點";
+                    textFeedbackNode.innerText = "看來你還是有點東西的。只有一點點。";
                     textFeedbackNode.className = "text-amber-400 font-medium text-center text-sm px-2 pt-2";
-                } else if (roundedScore === 4 || roundedScore === 5) {
-                    textFeedbackNode.innerText = "這實力還是有點東西的!";
+                } else if (roundedScore === 4) {
+                    textFeedbackNode.innerText = "看來你是老手呢!";
                     textFeedbackNode.className = "text-emerald-400 font-bold text-center text-sm px-2 pt-2";
-                } else if (roundedScore === 6) {
-                    textFeedbackNode.innerText = "完美! 你是小天才吧?! 👑";
+                } else if (roundedScore === 5) {
+                    textFeedbackNode.innerText = "完美!你是小天才吧?!";
                     textFeedbackNode.className = "text-cyan-400 font-black text-center text-base px-2 pt-2 animate-bounce";
                 }
             } else if (selectedMode === 'extreme') {
                 if (roundedScore === 0) {
-                    textFeedbackNode.innerText = "正常。大多數人都無法答對一題。";
+                    textFeedbackNode.innerText = "唉。不多說什麼了。";
                     textFeedbackNode.className = "text-zinc-500 font-medium text-center text-sm px-2 pt-2";
                 } else if (roundedScore === 1) {
-                    textFeedbackNode.innerText = "運氣?還是實力? 🤔";
+                    textFeedbackNode.innerText = "我覺得挺正常的。";
                     textFeedbackNode.className = "text-amber-400 font-bold text-center text-sm px-2 pt-2";
                 } else if (roundedScore === 2) {
-                    textFeedbackNode.innerText = "神童就是你! 🌟";
-                    textFeedbackNode.className = "text-emerald-400 font-black text-center text-sm px-2 pt-2";
+                    textFeedbackNode.innerText = "運氣? 還是實力?";
+                    textFeedbackNode.className = "text-purple-400 font-bold text-center text-sm px-2 pt-2";
                 } else if (roundedScore === 3) {
-                    textFeedbackNode.innerText = "這是人能做出來的事嗎?? 🤯";
+                    textFeedbackNode.innerText = "這是人能做出來的事嗎?太厲害了!";
                     textFeedbackNode.className = "text-red-400 font-black text-center text-base px-2 pt-2 uppercase tracking-wider";
                 }
             }
@@ -1105,7 +1225,7 @@
             dynamicTotalAttemptsCount = 0;
             hasAttemptedCurrentQuestion = false;
             hintUsedForCurrentQuestion = false;
-            hasGivenUpCurrentQuestion = false;
+            surrenderStateActive = false;
 
             document.getElementById('screen-3').classList.remove('animate-67-meme');
             document.getElementById('screen-3').classList.replace('block', 'hidden');
@@ -1118,7 +1238,7 @@
             dynamicTotalAttemptsCount = 0;
             hasAttemptedCurrentQuestion = false;
             hintUsedForCurrentQuestion = false;
-            hasGivenUpCurrentQuestion = false;
+            surrenderStateActive = false;
 
             const easyBtn = document.getElementById('mode-easy');
             const hardBtn = document.getElementById('mode-hard');
@@ -1129,9 +1249,9 @@
             extremeBtn.className = "w-full py-4 rounded-xl font-bold border-2 border-zinc-800 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 transition-all text-base";
             
             selectedMode = 'easy';
-            maxQuestions = 10;
+            maxQuestions = 7;
             totalBlocks = 4;
-            maxPlaybacksAllowed = Infinity;
+            activeBpmValue = 60;
 
             document.getElementById('screen-3').classList.remove('animate-67-meme');
             document.getElementById('screen-4').classList.replace('block', 'hidden');
