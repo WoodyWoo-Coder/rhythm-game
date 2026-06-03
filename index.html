@@ -124,58 +124,70 @@
         </div>
     </div>
 
-    <div id="tutorial-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+<div id="tutorial-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-zinc-855 border border-zinc-700 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl transform transition-all text-left">
             <div class="flex items-center justify-between border-b border-zinc-700 pb-3">
-                <h3 id="tutorial-title" class="text-xl font-black text-white tracking-wide">💡 如何進行遊戲？(1/2)</h3>
-                <button onclick="toggleTutorialModal(false)" class="text-zinc-400 hover:text-zinc-200 font-bold text-lg p-1">&times;</button>
+                <h3 id="tutorial-title" class="text-sm font-black text-white tracking-wide">💡 如何進行遊戲？(1/3)</h3>
+                <button onclick="toggleTutorialModal(false)" class="text-sm text-zinc-400 hover:text-zinc-200 font-bold p-1">&times;</button>
             </div>
             
             <div id="tutorial-page-1" class="space-y-4 text-sm text-zinc-300 leading-relaxed overflow-y-auto max-h-96 pr-1 block">
-                <div class="flex gap-3">
+                <div class="flex gap-3 text-sm">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">1</span>
-                    <p><strong class="text-white">聆聽題目：</strong> 點擊頂部的 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">▶ 播放</span> 按鈕，系統會先進行 4 拍倒數，随後播放正確的神秘節奏組合。</p>
+                    <p class="text-sm"><strong class="text-white">聆聽題目：</strong> 點擊頂部的 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">▶ 播放</span> 按鈕，系統會先進行 4 拍倒數，随后播放正確的神秘節奏組合。</p>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3 text-sm">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">2</span>
-                    <p><strong class="text-white">依序填空：</strong> 觀察中間的節奏字卡圖形，直接點擊它們，即可將圖形依序填入下方的答題欄位空格中。</p>
+                    <p class="text-sm"><strong class="text-white">依序填空：</strong> 觀察中間的節奏字卡圖形，直接點擊它們，即可將圖形依序填入下方的答題欄位空格中。</p>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3 text-sm">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">3</span>
-                    <p><strong class="text-white">修改答案：</strong> 若填錯了，直接點擊下方空格內已填入的圖形即可單獨將其移除；或點擊右側的 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">🔄 重設</span> 按鈕清空重填。</p>
+                    <p class="text-sm"><strong class="text-white">修改答案：</strong> 若填錯了，直接點擊下方空格內已填入的圖形即可單獨將其移除；或點擊右側的 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">🔄 重設</span> 按鈕清空重填。</p>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3 text-sm">
                     <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-600 text-white font-mono text-xs font-black flex items-center justify-center">4</span>
-                    <p><strong class="text-white">送出檢查：</strong> 填滿所有空格後，點擊 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">✓ 檢查</span> 來核對答案。答對即可解鎖前往下一題！遇上難關時，也可以善用提示功能。</p>
+                    <p class="text-sm"><strong class="text-white">送出檢查：</strong> 填滿所有空格後，點擊 <span class="text-zinc-100 font-bold bg-zinc-800 px-1.5 py-0.5 rounded">✓ 檢查</span> 來核對答案。答對即可解鎖前往下一題！遇上難關時，也可以善用提示功能。</p>
                 </div>
             </div>
 
             <div id="tutorial-page-2" class="space-y-4 text-sm text-zinc-300 leading-relaxed overflow-y-auto max-h-96 pr-1 hidden">
-                <div class="space-y-2">
-                    <h4 class="text-white font-bold border-l-2 border-blue-500 pl-2">🎵 (1) 如何調整節奏速度 (BPM)</h4>
-                    <p>在核心遊戲畫面的左上方控制面板中可以找到 <strong class="text-zinc-100">BPM</strong> 輸入欄位。您可以直接點擊輸入框鍵入數字、或者使用上下微調鍵。BPM 越高，節奏的播放速度就會越快！請注意，不同模式有不同的最低速度規則限制。</p>
+                <div class="space-y-2 text-sm">
+                    <h4 class="text-white font-bold border-l-2 border-blue-500 pl-2 text-sm">🎵 (1) 調整節奏速度 (BPM)</h4>
+                    <p class="text-sm">在核心遊戲畫面的左上方控制面板中可以找到 <strong class="text-zinc-100">BPM</strong> 輸入欄位。您可以直接點擊輸入框鍵入數字、或者使用上下微調鍵。BPM 越高，節奏的播放速度就會越快！請注意，不同模式有不同的最低速度規則限制。</p>
                 </div>
                 
-                <div class="space-y-2">
-                    <h4 class="text-white font-bold border-l-2 border-amber-500 pl-2">🤫 (2) 神祕彩蛋</h4>
-                    <p>聽說系統中隱藏了一個極度罕見的神秘彩蛋……目前唯一能透露的線索是：<strong class="text-amber-400">這個彩蛋似乎只能在「簡單模式 (Easy Mode)」中被觸發</strong>。第一位成功發現、觸發並截圖回報的人，作者正在秘密籌備一份神祕大獎，趕緊去測試你的實力與運氣吧！</p>
+                <div class="space-y-2 text-sm">
+                    <h4 class="text-white font-bold border-l-2 border-emerald-500 pl-2 text-sm">💡 (2) 善用提示功能</h4>
+                    <p class="text-sm">遇到聽不出來的音符時，可以點擊 <strong class="text-emerald-400">提示</strong> 按鈕。提示功能每次<strong class="text-zinc-100">只能為您解鎖一格正確答案</strong>，且由於使用了協助，該題答對時<strong class="text-amber-400">只能拿到 0.5 分</strong>。請謹慎斟酌使用的時機！</p>
                 </div>
 
-                <div class="space-y-2">
-                    <h4 class="text-white font-bold border-l-2 border-emerald-500 pl-2">🎮 (3) 三大模式詳細規則差異</h4>
-                    <ul class="list-disc pl-5 space-y-1 text-xs">
+                <div class="space-y-2 text-sm">
+                    <h4 class="text-white font-bold border-l-2 border-rose-500 pl-2 text-sm">🏳️ (3) 放棄當前題目</h4>
+                    <p class="text-sm">如果真的遭遭遇完全無法解鎖的難關，可以點擊 <strong class="text-rose-400">放棄</strong> 按鈕。點擊後系統會<strong class="text-zinc-100">直接顯示該題的四個正確答案</strong>，讓您能對照聆聽學習，隨後請您直接點擊進入下一題。</p>
+                </div>
+            </div>
+
+            <div id="tutorial-page-3" class="space-y-4 text-sm text-zinc-300 leading-relaxed overflow-y-auto max-h-96 pr-1 hidden">
+                <div class="space-y-2 text-sm">
+                    <h4 class="text-white font-bold border-l-2 border-purple-500 pl-2 text-sm">🎮 三大模式詳細規則差異</h4>
+                    <ul class="list-disc pl-5 space-y-1.5 text-xs leading-relaxed">
                         <li><strong class="text-zinc-100">簡單模式：</strong> 共有 7 題。採用基礎 4 拍結構，BPM 範圍 60-200。僅出現簡單音符 (圖 1-5)。播放次數無限制。</li>
                         <li><strong class="text-zinc-100">中等模式：</strong> 共有 5 題。採用基礎 4 拍結構，BPM 範圍 90-200。混合 2 個簡單音符與 2 個進階音符 (圖 6-8)。每題限播 2 次。</li>
                         <li><strong class="text-zinc-100">困難模式：</strong> 僅有 3 題。採用基礎 4 拍結構，BPM 範圍 120-200。包含 1 個簡單音符與 3 個進階音符 (圖 6-8)。每題限播 1 次。</li>
                     </ul>
                 </div>
+
+                <div class="space-y-2 pt-1 text-sm">
+                    <h4 class="text-white font-bold border-l-2 border-amber-500 pl-2 text-sm">🤫 神祕彩蛋</h4>
+                    <p class="text-sm">聽說系統中隱藏了一個極度罕見的神秘彩蛋……目前唯一能透露的線索是：<strong class="text-amber-400">這個彩蛋只能在「簡單模式 (Easy Mode)」中被觸發</strong>。第一位成功發現、觸發並截圖回報的人，作者正在秘密籌備一份神祕大獎，趕緊去測試你的實力與運氣吧！</p>
+                </div>
             </div>
 
-            <div class="pt-2 border-t border-zinc-800 flex justify-between items-center">
-                <button id="tutorial-prev-btn" onclick="navigateTutorialPage(-1)" class="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white font-bold text-xs rounded-xl transition-all invisible">
+            <div class="pt-2 border-t border-zinc-800 flex justify-between items-center text-sm">
+                <button id="tutorial-prev-btn" onclick="navigateTutorialPage(-1)" class="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white font-bold text-sm rounded-xl transition-all invisible">
                     ← 上一頁
                 </button>
-                <button id="tutorial-next-btn" onclick="navigateTutorialPage(1)" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition-all">
+                <button id="tutorial-next-btn" onclick="navigateTutorialPage(1)" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all">
                     下一頁 →
                 </button>
             </div>
@@ -610,7 +622,7 @@
             }
         }
 
-        function toggleTutorialModal(show) {
+function toggleTutorialModal(show) {
             const modal = document.getElementById('tutorial-modal');
             if (show) {
                 activeTutorialStep = 1;
@@ -624,7 +636,9 @@
         function navigateTutorialPage(direction) {
             activeTutorialStep += direction;
             if (activeTutorialStep < 1) activeTutorialStep = 1;
-            if (activeTutorialStep > 2) {
+            
+            // 當在第三頁按「完成 / 關閉」時（即超過第三頁），直接安全關閉視窗
+            if (activeTutorialStep > 3) {
                 toggleTutorialModal(false);
                 return;
             }
@@ -635,30 +649,52 @@
             const title = document.getElementById('tutorial-title');
             const page1 = document.getElementById('tutorial-page-1');
             const page2 = document.getElementById('tutorial-page-2');
+            const page3 = document.getElementById('tutorial-page-3');
             const prevBtn = document.getElementById('tutorial-prev-btn');
             const nextBtn = document.getElementById('tutorial-next-btn');
 
+            // 每次切換前，先把 3 頁全部隱藏起來，避免畫面重疊
+            page1.classList.replace('block', 'hidden');
+            page2.classList.replace('block', 'hidden');
+            page3.classList.replace('block', 'hidden');
+
             if (activeTutorialStep === 1) {
-                title.innerText = "💡 如何進行遊戲？(1/2)";
+                title.innerText = "💡 如何進行遊戲？(1/3)";
                 page1.classList.replace('hidden', 'block');
-                page2.classList.replace('block', 'hidden');
-                prevBtn.classList.add('invisible');
+                prevBtn.classList.add('invisible'); // 第一頁不能按上一頁
                 nextBtn.innerText = "下一頁 →";
-            } else {
-                title.innerText = "💡 如何進行遊戲？(2/2)";
-                page1.classList.replace('block', 'hidden');
+                
+            } else if (activeTutorialStep === 2) {
+                title.innerText = "💡 如何進行遊戲？(2/3)";
                 page2.classList.replace('hidden', 'block');
+                prevBtn.classList.remove('invisible'); // 秀出上一頁
+                nextBtn.innerText = "下一頁 →";
+                
+            } else if (activeTutorialStep === 3) {
+                title.innerText = "💡 如何進行遊戲？(3/3)";
+                page3.classList.replace('hidden', 'block');
                 prevBtn.classList.remove('invisible');
-                nextBtn.innerText = "完成 / 關閉";
+                nextBtn.innerText = "完成 / 關閉"; // 最後一頁按鈕文字轉換
             }
         }
 
-        /* 樂器圖片展示同步器 */
+/* 樂器圖片展示同步器 */
         function syncInstrumentIconDisplay() {
             const selectedVal = document.getElementById('synth-type').value;
             const outputElement = document.getElementById('instrument-icon-output');
             if (outputElement) {
                 outputElement.src = `Per${selectedVal}.png`;
+            }
+        }
+
+        /* 助教圖片展示同步器 (加在樂器同步器後面) */
+        function syncAssistantIconDisplay() {
+            const selectedVal = document.getElementById('assistant-select').value;
+            const outputElement = document.getElementById('assistant-icon-output');
+            if (outputElement) {
+                if (selectedVal === "brian") {
+                    outputElement.src = "Assistant1_success.png";
+                }
             }
         }
 
@@ -713,7 +749,24 @@
             startContainer.classList.add('opacity-100', 'max-h-24');
         }
 
-        function advanceToScreen2() {
+function advanceToScreen2() {
+            // 每次進入 Screen 2 時，強行將選單與圖片強制恢復成你的預設值 (Brian 與 小鼓)
+            const assistantSelect = document.getElementById('assistant-select');
+            const synthSelect = document.getElementById('synth-type');
+            
+            if (assistantSelect) {
+                assistantSelect.value = "brian";
+            }
+            
+            if (synthSelect) {
+                synthSelect.value = "1"; // 強制切回 1 (小鼓)
+                // 主動呼叫下方的樂器同步器，把圖片重新刷回小鼓的 Per1.png
+                if (typeof syncInstrumentIconDisplay === "function") {
+                    syncInstrumentIconDisplay();
+                }
+            }
+
+            // 執行你原本完全沒變的畫面切換邏輯
             document.getElementById('screen-1').classList.replace('block', 'hidden');
             document.getElementById('screen-2').classList.replace('hidden', 'block');
         }
@@ -755,23 +808,39 @@
             document.getElementById('bpm-range-indicator').innerText = `(此模式最低限制: ${minAllowed})`;
         }
 
-        function generateSecretLevelTargetPattern() {
+function generateSecretLevelTargetPattern() {
             let isValidPattern = false;
-            let maxClueId = 8;
-            if (selectedMode === 'easy') maxClueId = 5;
-
+            
             while (!isValidPattern) {
                 secretLevelTargetPattern = [];
-                for(let i = 0; i < 4; i++) {
-                    let randomId = Math.floor(Math.random() * maxClueId) + 1;
-                    secretLevelTargetPattern.push(randomId);
+                
+                if (selectedMode === 'easy') {
+                    // 簡單模式：維持原本的設定，精確只抽 1-5
+                    for(let i = 0; i < 4; i++) {
+                        let randomId = Math.floor(Math.random() * 5) + 1;
+                        secretLevelTargetPattern.push(randomId);
+                    }
+                } else if (selectedMode === 'hard') {
+                    // 中等模式：精確抽取 2 張 1-5、2 張 6-8
+                    let easyNotes = Array.from({length: 2}, () => Math.floor(Math.random() * 5) + 1);
+                    let hardNotes = Array.from({length: 2}, () => Math.floor(Math.random() * 3) + 6);
+                    // 合併後隨機打散洗牌排序
+                    secretLevelTargetPattern = [...easyNotes, ...hardNotes].sort(() => Math.random() - 0.5);
+                } else if (selectedMode === 'extreme') {
+                    // 困難模式：精確抽取 1 張 1-5、3 張 6-8
+                    let easyNotes = Array.from({length: 1}, () => Math.floor(Math.random() * 5) + 1);
+                    let hardNotes = Array.from({length: 3}, () => Math.floor(Math.random() * 3) + 6);
+                    // 合併後隨機打散洗牌排序
+                    secretLevelTargetPattern = [...easyNotes, ...hardNotes].sort(() => Math.random() - 0.5);
                 }
                 
+                // 這裡保留你原本寫的：檢查題目種類多樣性（至少要有 3 種不同的音符）
                 let uniqueElements = new Set(secretLevelTargetPattern);
                 if (uniqueElements.size >= 3) {
                     isValidPattern = true;
                 }
             }
+            
             console.log("⚡ 本題正解答案為:", secretLevelTargetPattern);
         }
 
