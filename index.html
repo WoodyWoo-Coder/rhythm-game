@@ -293,8 +293,8 @@
             </div>
         </div>
 
-        <div id="countdown-banner" class="hidden text-center py-2 bg-blue-950/40 border border-blue-900/60 text-blue-400 rounded-xl font-mono text-sm tracking-widest uppercase font-bold animate-pulse">
-            準備中... COUNT: <span id="countdown-value">4</span>
+        <div id="countdown-banner" class="hidden">
+            <span id="countdown-value">4</span>
         </div>
 
         <div class="space-y-3">
@@ -542,14 +542,13 @@
             playButtonNode.className = "px-6 py-2.5 rounded-xl text-sm font-black bg-blue-600 border border-blue-500 text-white animate-pulse uppercase tracking-wider cursor-not-allowed shadow-md";
             playButtonNode.innerHTML = "⏳ 播放中";
 
-            const banner = document.getElementById('countdown-banner');
-            banner.classList.remove('hidden');
+            // 💡 這裡已經完美移除讓 banner 現形的兩行指令，文字永遠保持 hidden 隱藏，絕不多佔用畫面空間！
 
             // 根據當前輸入的 BPM 重算精確間隔
             secondsPerBeat = 60.0 / activeBpmValue;
             secondsPerStep = secondsPerBeat / 4;
 
-            currentStepIndex = -4; // 從負 4 拍開始完美倒數
+            currentStepIndex = -4; // 從負 4 拍開始完美倒數（維持原狀，聲音預備拍完全正常）
             nextNoteTime = audioCtx.currentTime + 0.05;
             schedulerIntervalId = setInterval(rhythmSchedulerEngine, 25);
         }
@@ -1084,10 +1083,30 @@ function generateSecretLevelTargetPattern() {
 
         function triggerSurrenderReveal() {
             if (surrenderStateActive) return;
-            surrenderStateActive = true;
 
+            // 💡 核心修正：加上 `!hasAttemptedCurrentQuestion` 條件！
+            // 原本 6/6 分，且【完全沒有點過檢查答錯】、第一次就直接按放棄，才允許觸發彩蛋插播。
+            // 如果前面已經答錯搖晃過了，這裡就會被直接攔截，乖乖走底下的常規放棄流程，絕不重複跳彈窗！
+            if (selectedMode === 'easy' && totalQuestionsProcessed === 7) {
+                let currentScoreBase = parseFloat(dynamicCorrectCount.toFixed(1));
+                if (currentScoreBase === 6.0 && !hasAttemptedCurrentQuestion) {
+                    
+                    // 🚀 第一次觸發的彩蛋插播
+                    document.getElementById('screen-3').classList.add('animate-67-meme');
+                    setTimeout(() => {
+                        const eggModal = document.getElementById('easter-egg-modal');
+                        if (eggModal) eggModal.classList.remove('hidden');
+                    }, 1500);
+                }
+            }
+
+            // =================================================================
+            // 🚂 常規放棄流程（不管有沒有彩蛋，或者是答錯後再按放棄，通通都會跑這裡）
+            // =================================================================
+            surrenderStateActive = true;
             triggerSfxNotification(false);
 
+            // 公布正確答案
             for (let i = 0; i < 4; i++) {
                 currentAnswersState[i] = secretLevelTargetPattern[i];
             }
@@ -1098,6 +1117,7 @@ function generateSecretLevelTargetPattern() {
                 document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
             }
 
+            // 鎖死所有控制項，讓答案不能改
             document.getElementById('play-btn').disabled = true;
             document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
             document.getElementById('hint-btn').disabled = true;
@@ -1110,15 +1130,15 @@ function generateSecretLevelTargetPattern() {
             document.getElementById('pool-title-label').innerText = "🏳️ [已放棄此題] 答案已自動公布";
             document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-red-400 animate-pulse";
 
+            // 將檢查按鈕切換為「下一題 ➔」
             const checkActionNode = document.getElementById('check-btn');
             checkActionNode.innerHTML = "下一題 ➔";
             checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
             checkActionNode.onclick = stepForwardToNextLevelPattern;
 
             updateAssistantExpression('warn');
-            buildUserBlanks();
+            buildUserBlanks(); // 刷新格子顯示正解
         }
-
         function enableAllInteractionControls() {
             document.getElementById('check-btn').innerHTML = "✓ 檢查";
             document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
@@ -1164,7 +1184,7 @@ function generateSecretLevelTargetPattern() {
             }, totalDurationSec * 1000);
         }
 
-        /* 答題核心與 6/7 彩蛋精確判定 */
+/* 答題核心與 6/7 彩蛋精確判定 */
         function checkUserSubmission() {
             if (playbackActive || surrenderStateActive) return;
 
@@ -1188,41 +1208,35 @@ function generateSecretLevelTargetPattern() {
                 }
             }
 
-            // 【微調點 3 核心修正】：在點擊檢查的一瞬間，針對指定的 3 大情境精準攔截觸發搖晃！
+            // =================================================================
+            // 【三大檢查情境核心修正區】：第 7 題（7/7）黃金彩蛋精準插播
+            // =================================================================
             if (selectedMode === 'easy' && totalQuestionsProcessed === 7) {
                 let currentScoreBase = parseFloat(dynamicCorrectCount.toFixed(1));
-                let willTrigger67EasterEgg = false;
 
-                // 情境 (1)：原本 5/6 分，不靠提示且第一次答對 (+1.0) -> 剛好 6.0 分
-                if (currentScoreBase === 5.0 && !hasAttemptedCurrentQuestion && !hintUsedForCurrentQuestion && answersAreValid) {
-                    willTrigger67EasterEgg = true;
-                }
-                // 情境 (2)：原本 6/6 分，結果第七題答錯了 (+0.0) -> 依舊保持 6.0 分
-                else if (currentScoreBase === 6.0 && !hasAttemptedCurrentQuestion && !answersAreValid) {
-                    willTrigger67EasterEgg = true;
-                }
-                // 情境 (3)：原本 5.5/6 分，使用了提示且第一次答對 (+0.5) -> 剛好 6.0 分
-                else if (currentScoreBase === 5.5 && !hasAttemptedCurrentQuestion && hintUsedForCurrentQuestion && answersAreValid) {
-                    willTrigger67EasterEgg = true;
-                }
+                // 🌟 【情境 1】：原本 5/6 分，不靠提示且第一次答對 (+1.0) -> 剛好 6.0 分
+                let isSituation1 = (currentScoreBase === 5.0 && !hasAttemptedCurrentQuestion && !hintUsedForCurrentQuestion && answersAreValid);
+                
+                // 🌟 【情境 4】：原本 5.5/6 分，使用了提示且第一次答對 (+0.5) -> 剛好 6.0 分
+                let isSituation4 = (currentScoreBase === 5.5 && !hasAttemptedCurrentQuestion && hintUsedForCurrentQuestion && answersAreValid);
 
-                // 如果滿足上述任何一種 6/7 黃金情境，一瞬間發動搖晃，並且過 1.5 秒彈出恭喜畫面！
-                if (willTrigger67EasterEgg) {
-                    // 正確同步計入分數以防漏洞
+                // 🌟 【情境 3】：原本 6/6 分（滿分），結果第七題答錯了 (+0.0) -> 依舊保持 6.0 分
+                // 💡 只有「第一次答錯」會觸發彩蛋
+                let isSituation3_Wrong = (currentScoreBase === 6.0 && !hasAttemptedCurrentQuestion && !answersAreValid);
+
+                // ─── 情況 A：如果是答對的彩蛋（情境 1 或 4） ───
+                if (isSituation1 || isSituation4) {
                     if (!hasAttemptedCurrentQuestion) {
                         hasAttemptedCurrentQuestion = true;
-                        dynamicTotalAttemptsCount++;
-                        if (answersAreValid) {
-                            dynamicCorrectCount += (hintUsedForCurrentQuestion ? 0.5 : 1.0);
-                        }
+                        dynamicTotalAttemptsCount++; // 這題第一次作答，分母 +1
+                        dynamicCorrectCount += (hintUsedForCurrentQuestion ? 0.5 : 1.0);
                         document.getElementById('score-numerator').innerText = parseFloat(dynamicCorrectCount.toFixed(1));
                         document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
                     }
 
-                    triggerSfxNotification(answersAreValid);
-                    updateAssistantExpression(answersAreValid ? 'happy' : 'sad');
+                    triggerSfxNotification(true);
+                    updateAssistantExpression('happy');
                     
-                    // 馬上觸發 6-7 搖晃
                     document.getElementById('screen-3').classList.add('animate-67-meme');
                     disableAllInteractionControls();
 
@@ -1230,24 +1244,68 @@ function generateSecretLevelTargetPattern() {
                         const eggModal = document.getElementById('easter-egg-modal');
                         if (eggModal) eggModal.classList.remove('hidden');
                     }, 1500); 
-                    return;
+                    return; 
+                }
+                
+                // ─── 情況 B：如果是答錯的彩蛋（情境 3：第一次答錯） ───
+                else if (isSituation3_Wrong) {
+                    if (!hasAttemptedCurrentQuestion) {
+                        hasAttemptedCurrentQuestion = true;
+                        dynamicTotalAttemptsCount++; // 這題第一次作答，分母 +1
+                        document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
+                    }
+
+                    triggerSfxNotification(false);
+                    updateAssistantExpression('sad');
+                    
+                    // 插播彩蛋：大搖晃 + 1.5 秒後跳出恭喜視窗
+                    document.getElementById('screen-3').classList.add('animate-67-meme');
+                    setTimeout(() => {
+                        const eggModal = document.getElementById('easter-egg-modal');
+                        if (eggModal) eggModal.classList.remove('hidden');
+                    }, 1500);
+
+                    return; // 關窗後按鈕維持「✓ 檢查」
                 }
             }
+            // =================================================================
 
-            // 3. 常規普通關卡計分與判定流程
+            // 3. 🎯 【常規計分防線修正】：不管是一般關卡，還是第 7 題彩蛋過後的重複點擊，通通走這套精準計分
+            
+            // 💡 只有當這題是「第一次作答」時，才允許把分母（總嘗試次數）加 1
             if (!hasAttemptedCurrentQuestion) {
                 hasAttemptedCurrentQuestion = true;
                 dynamicTotalAttemptsCount++;
                 document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
 
+                // 第一次就答對，立刻加上對應的分數
                 if (answersAreValid) {
                     const rewardWeight = hintUsedForCurrentQuestion ? 0.5 : 1.0;
                     dynamicCorrectCount += rewardWeight;
                 }
                 document.getElementById('score-numerator').innerText = parseFloat(dynamicCorrectCount.toFixed(1));
+            } 
+            // 💡 核心修復點：如果是「重複檢查（hasAttemptedCurrentQuestion 已經是 true 了）」
+            else {
+                // 如果之前這題已經算過一次嘗試了（比如之前錯了，現在改答案重新檢查）：
+                // 如果這一次終於「改對了」，就把之前沒拿到的分數補加上去！
+                if (answersAreValid) {
+                    // 檢查目前的分子，如果分子還沒加上這題的分數，才進行補加（避免重複加分漏洞）
+                    // 計算常規下這題應得的分數
+                    const rewardWeight = hintUsedForCurrentQuestion ? 0.5 : 1.0;
+                    
+                    // 這裡的邏輯是原本常規就有的：如果之前算錯，後來改對，依然把應得的分數給玩家補上
+                    // （註：如果你原本的常規機制是「第一次錯，後面改對就不給分」，你可以把下面這兩行刪掉，但根據你原本程式碼的語境是會補加的）
+                    dynamicCorrectCount += rewardWeight; 
+                    document.getElementById('score-numerator').innerText = parseFloat(dynamicCorrectCount.toFixed(1));
+                }
+                // 🛑 如果重複點擊「依然答錯」，直接什麼都不做！不加分子、也絕對不准再加分母！
             }
 
+            // 4. 根據最終對錯切換按鈕狀態與表情
             if (answersAreValid) {
+                document.getElementById('screen-3').classList.remove('animate-67-meme');
+
                 triggerSfxNotification(true);
                 updateAssistantExpression('happy');
                 disableAllInteractionControls();
@@ -1258,11 +1316,12 @@ function generateSecretLevelTargetPattern() {
                 checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
             } else {
+                // 重複答錯，只會重新播放失敗音效跟傷心表情，分母完美鎖死、不會增加！
                 triggerSfxNotification(false);
                 updateAssistantExpression('sad');
             }
         }
-
+        
         function stepForwardToNextLevelPattern() {
             hasAttemptedCurrentQuestion = false;
 
@@ -1339,16 +1398,36 @@ function generateSecretLevelTargetPattern() {
         }
 
         function closeEasterEggModalAndContinue() {
+            // 1. 隱藏彩蛋恭喜視窗
             const eggModal = document.getElementById('easter-egg-modal');
             if (eggModal) eggModal.classList.add('hidden');
-            
-            disableAllInteractionControls();
-            
-            const checkActionNode = document.getElementById('check-btn');
-            checkActionNode.innerHTML = "下一題 ➔";
-            checkActionNode.disabled = false;
-            checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
-            checkActionNode.onclick = stepForwardToNextLevelPattern;
+
+            // 2. 移除畫面的大搖晃動畫特效
+            document.getElementById('screen-3').classList.remove('animate-67-meme');
+
+            // 💡 關鍵修復防線：判斷剛剛到底是「答錯」還是「放棄/答對」
+            // 只有在【已放棄】或者是【答案正確（按鈕已被換成下一題）】的情境下，才需要維持或設定為下一題
+            if (surrenderStateActive) {
+                // 如果是放棄狀態，確保按鈕維持下一題
+                const checkActionNode = document.getElementById('check-btn');
+                checkActionNode.innerHTML = "下一題 ➔";
+                checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
+                checkActionNode.onclick = stepForwardToNextLevelPattern;
+            } else {
+                // 🌟 如果使用者剛剛是【答錯（情境3）】而觸發彩蛋
+                // 因為答案依然不對，所以關閉彈窗後，我們要維持原本常規答錯的樣子：
+                // 按鈕必須保持原樣（檢查答案），且不能反灰，讓使用者可以繼續點擊修改！
+                
+                // 檢查目前畫面的按鈕文字，如果是下一題，表示剛剛不是答錯，就不動它
+                // 如果不是下一題，代表剛剛是答錯，我們強制確保它維持「✓ 檢查」的原始設定：
+                const checkActionNode = document.getElementById('check-btn');
+                if (checkActionNode.innerHTML !== "下一題 ➔") {
+                    checkActionNode.innerHTML = "✓ 檢查";
+                    checkActionNode.className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-md";
+                    checkActionNode.onclick = checkUserSubmission; // 綁定回檢查函式
+                    checkActionNode.disabled = false; // 確保沒有被誤鎖
+                }
+            }
         }
 
         function disableAllInteractionControls() {
