@@ -925,8 +925,28 @@ function generateSecretLevelTargetPattern() {
     }
 }
 
-        /* 建立使用者答題空格：配合優化點 1，完全移除 BEAT 1~4 與 HINT LOCKED 字樣標籤 */
+/* 建立使用者答題空格：配合優化點 1，完全移除 BEAT 1~4 與 HINT LOCKED 字樣標籤 */
         function buildUserBlanks() {
+            // 🔓【精確解鎖防線】：進入新題目時解除格子鎖定
+            const userBlanksArea = document.getElementById('user-blanks-target');
+            if (userBlanksArea) {
+                userBlanksArea.style.pointerEvents = 'auto'; 
+            }
+            
+            // 🔒 只有在「不是放棄狀態」且「不是答對鎖定狀態」下，才允許解鎖重置按鈕
+            // 這樣能保證放棄或答對時，Reset 按鈕絕對不會在函式末尾被意外啟動！
+            const resetBtnNode = document.getElementById('reset-blanks-btn');
+            if (resetBtnNode) {
+                if (!surrenderStateActive) {
+                    resetBtnNode.disabled = false; // 正常解鎖功能
+                    resetBtnNode.style.opacity = '1.0'; // 恢復正常亮度
+                } else {
+                    // 如果是放棄狀態，強制維持鎖死
+                    resetBtnNode.disabled = true;
+                    resetBtnNode.style.opacity = '0.2';
+                }
+            }
+
             buildClueGrid();
             const container = document.getElementById('user-blanks-target');
             container.innerHTML = '';
@@ -945,7 +965,7 @@ function generateSecretLevelTargetPattern() {
                     blockFrame.onclick = () => removeSelectedBlankValue(idx);
                 }
 
-                // 微調點：不論是否鎖定或未填，完全不顯示任何文字，只留下純粹乾淨的容器或滿版圖片
+                // 微調點：不論是否鎖定或未填，完全不顯示 any 文字，只留下純粹乾淨的容器或滿版圖片
                 let contentCoreHtml = `
                     <div class="flex flex-col items-center justify-center p-2 w-full min-h-0">
                         <span class="text-xs font-bold text-zinc-700 tracking-wider">點擊置入</span>
@@ -1085,8 +1105,6 @@ function generateSecretLevelTargetPattern() {
             if (surrenderStateActive) return;
 
             // 💡 核心修正：加上 `!hasAttemptedCurrentQuestion` 條件！
-            // 原本 6/6 分，且【完全沒有點過檢查答錯】、第一次就直接按放棄，才允許觸發彩蛋插播。
-            // 如果前面已經答錯搖晃過了，這裡就會被直接攔截，乖乖走底下的常規放棄流程，絕不重複跳彈窗！
             if (selectedMode === 'easy' && totalQuestionsProcessed === 7) {
                 let currentScoreBase = parseFloat(dynamicCorrectCount.toFixed(1));
                 if (currentScoreBase === 6.0 && !hasAttemptedCurrentQuestion) {
@@ -1101,7 +1119,7 @@ function generateSecretLevelTargetPattern() {
             }
 
             // =================================================================
-            // 🚂 常規放棄流程（不管有沒有彩蛋，或者是答錯後再按放棄，通通都會跑這裡）
+            // 🚂 常規放棄流程
             // =================================================================
             surrenderStateActive = true;
             triggerSfxNotification(false);
@@ -1117,15 +1135,21 @@ function generateSecretLevelTargetPattern() {
                 document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
             }
 
-            // 鎖死所有控制項，讓答案不能改
+            // 鎖死所有控制項
             document.getElementById('play-btn').disabled = true;
             document.getElementById('play-btn').className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
             document.getElementById('hint-btn').disabled = true;
             document.getElementById('hint-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
             document.getElementById('surrender-btn').disabled = true;
             document.getElementById('surrender-btn').className = "px-5 py-2.5 bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed opacity-30 shadow-none";
-            document.getElementById('reset-blanks-btn').className = "p-1 opacity-20 cursor-not-allowed pointer-events-none";
             document.getElementById('bpm-input').disabled = true;
+
+            // 🔒【放棄同步鎖死防線】：直接禁用並淡出 Reset 按鈕
+            const resetBtnNode = document.getElementById('reset-blanks-btn');
+            if (resetBtnNode) {
+                resetBtnNode.disabled = true; 
+                resetBtnNode.style.opacity = '0.2';
+            }
 
             document.getElementById('pool-title-label').innerText = "🏳️ [已放棄此題] 答案已自動公布";
             document.getElementById('pool-title-label').className = "text-xs font-bold uppercase tracking-widest text-red-400 animate-pulse";
@@ -1137,8 +1161,9 @@ function generateSecretLevelTargetPattern() {
             checkActionNode.onclick = stepForwardToNextLevelPattern;
 
             updateAssistantExpression('warn');
-            buildUserBlanks(); // 刷新格子顯示正解
+            buildUserBlanks(); // 刷新格子，此時 buildUserBlanks 內部會遵循 surrenderStateActive 的防線，讓重置按鈕死死保持禁用！
         }
+        
         function enableAllInteractionControls() {
             document.getElementById('check-btn').innerHTML = "✓ 檢查";
             document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
@@ -1221,14 +1246,13 @@ function generateSecretLevelTargetPattern() {
                 let isSituation4 = (currentScoreBase === 5.5 && !hasAttemptedCurrentQuestion && hintUsedForCurrentQuestion && answersAreValid);
 
                 // 🌟 【情境 3】：原本 6/6 分（滿分），結果第七題答錯了 (+0.0) -> 依舊保持 6.0 分
-                // 💡 只有「第一次答錯」會觸發彩蛋
                 let isSituation3_Wrong = (currentScoreBase === 6.0 && !hasAttemptedCurrentQuestion && !answersAreValid);
 
                 // ─── 情況 A：如果是答對的彩蛋（情境 1 或 4） ───
                 if (isSituation1 || isSituation4) {
                     if (!hasAttemptedCurrentQuestion) {
                         hasAttemptedCurrentQuestion = true;
-                        dynamicTotalAttemptsCount++; // 這題第一次作答，分母 +1
+                        dynamicTotalAttemptsCount++;
                         dynamicCorrectCount += (hintUsedForCurrentQuestion ? 0.5 : 1.0);
                         document.getElementById('score-numerator').innerText = parseFloat(dynamicCorrectCount.toFixed(1));
                         document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
@@ -1237,13 +1261,31 @@ function generateSecretLevelTargetPattern() {
                     triggerSfxNotification(true);
                     updateAssistantExpression('happy');
                     
-                    document.getElementById('screen-3').classList.add('animate-67-meme');
                     disableAllInteractionControls();
+                    
+                    // 🔒【精確鎖定】：彩蛋答對時，凍結格子容器，並禁用 reset 按鈕
+                    const userBlanksArea = document.getElementById('user-blanks-target');
+                    if (userBlanksArea) {
+                        userBlanksArea.style.pointerEvents = 'none';
+                    }
+                    const resetBtnNode = document.getElementById('reset-blanks-btn');
+                    if (resetBtnNode) {
+                        resetBtnNode.disabled = true;
+                        resetBtnNode.style.opacity = '0.3';
+                    }
 
+                    const checkActionNode = document.getElementById('check-btn');
+                    checkActionNode.innerHTML = "下一題 ➔";
+                    checkActionNode.disabled = false;
+                    checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
+                    checkActionNode.onclick = stepForwardToNextLevelPattern;
+
+                    document.getElementById('screen-3').classList.add('animate-67-meme');
                     setTimeout(() => {
                         const eggModal = document.getElementById('easter-egg-modal');
                         if (eggModal) eggModal.classList.remove('hidden');
                     }, 1500); 
+                    
                     return; 
                 }
                 
@@ -1251,64 +1293,56 @@ function generateSecretLevelTargetPattern() {
                 else if (isSituation3_Wrong) {
                     if (!hasAttemptedCurrentQuestion) {
                         hasAttemptedCurrentQuestion = true;
-                        dynamicTotalAttemptsCount++; // 這題第一次作答，分母 +1
+                        dynamicTotalAttemptsCount++;
                         document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
                     }
 
                     triggerSfxNotification(false);
                     updateAssistantExpression('sad');
                     
-                    // 插播彩蛋：大搖晃 + 1.5 秒後跳出恭喜視窗
                     document.getElementById('screen-3').classList.add('animate-67-meme');
                     setTimeout(() => {
                         const eggModal = document.getElementById('easter-egg-modal');
                         if (eggModal) eggModal.classList.remove('hidden');
                     }, 1500);
 
-                    return; // 關窗後按鈕維持「✓ 檢查」
+                    return; 
                 }
             }
             // =================================================================
 
-            // 3. 🎯 【常規計分防線修正】：不管是一般關卡，還是第 7 題彩蛋過後的重複點擊，通通走這套精準計分
-            
-            // 💡 只有當這題是「第一次作答」時，才允許把分母（總嘗試次數）加 1
+            // 3. 常規普通關卡計分與判定流程
             if (!hasAttemptedCurrentQuestion) {
                 hasAttemptedCurrentQuestion = true;
                 dynamicTotalAttemptsCount++;
                 document.getElementById('score-denominator').innerText = dynamicTotalAttemptsCount;
 
-                // 第一次就答對，立刻加上對應的分數
                 if (answersAreValid) {
                     const rewardWeight = hintUsedForCurrentQuestion ? 0.5 : 1.0;
                     dynamicCorrectCount += rewardWeight;
                 }
                 document.getElementById('score-numerator').innerText = parseFloat(dynamicCorrectCount.toFixed(1));
             } 
-            // 💡 核心修復點：如果是「重複檢查（hasAttemptedCurrentQuestion 已經是 true 了）」
-            else {
-                // 如果之前這題已經算過一次嘗試了（比如之前錯了，現在改答案重新檢查）：
-                // 如果這一次終於「改對了」，就把之前沒拿到的分數補加上去！
-                if (answersAreValid) {
-                    // 檢查目前的分子，如果分子還沒加上這題的分數，才進行補加（避免重複加分漏洞）
-                    // 計算常規下這題應得的分數
-                    const rewardWeight = hintUsedForCurrentQuestion ? 0.5 : 1.0;
-                    
-                    // 這裡的邏輯是原本常規就有的：如果之前算錯，後來改對，依然把應得的分數給玩家補上
-                    // （註：如果你原本的常規機制是「第一次錯，後面改對就不給分」，你可以把下面這兩行刪掉，但根據你原本程式碼的語境是會補加的）
-                    dynamicCorrectCount += rewardWeight; 
-                    document.getElementById('score-numerator').innerText = parseFloat(dynamicCorrectCount.toFixed(1));
-                }
-                // 🛑 如果重複點擊「依然答錯」，直接什麼都不做！不加分子、也絕對不准再加分母！
-            }
 
-            // 4. 根據最終對錯切換按鈕狀態與表情
+            // 4. 根據答案對錯切換按鈕狀態與鎖定
             if (answersAreValid) {
                 document.getElementById('screen-3').classList.remove('animate-67-meme');
 
                 triggerSfxNotification(true);
                 updateAssistantExpression('happy');
-                disableAllInteractionControls();
+                
+                disableAllInteractionControls(); 
+                
+                // 🔒【精確鎖定】：常規關卡答對時，將格子容器切斷點擊，並禁用 reset 按鈕
+                const userBlanksArea = document.getElementById('user-blanks-target');
+                if (userBlanksArea) {
+                    userBlanksArea.style.pointerEvents = 'none';
+                }
+                const resetBtnNode = document.getElementById('reset-blanks-btn');
+                if (resetBtnNode) {
+                    resetBtnNode.disabled = true;
+                    resetBtnNode.style.opacity = '0.3';
+                }
                 
                 const checkActionNode = document.getElementById('check-btn');
                 checkActionNode.innerHTML = "下一題 ➔";
@@ -1316,12 +1350,11 @@ function generateSecretLevelTargetPattern() {
                 checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
             } else {
-                // 重複答錯，只會重新播放失敗音效跟傷心表情，分母完美鎖死、不會增加！
                 triggerSfxNotification(false);
                 updateAssistantExpression('sad');
             }
         }
-        
+
         function stepForwardToNextLevelPattern() {
             hasAttemptedCurrentQuestion = false;
 
@@ -1402,31 +1435,34 @@ function generateSecretLevelTargetPattern() {
             const eggModal = document.getElementById('easter-egg-modal');
             if (eggModal) eggModal.classList.add('hidden');
 
-            // 2. 移除畫面的大搖晃動畫特效
+            // 2. 移除畫面的大搖晃動畫特效（依照上一版決定，關窗後把搖晃拿掉，畫面恢復平靜）
             document.getElementById('screen-3').classList.remove('animate-67-meme');
 
-            // 💡 關鍵修復防線：判斷剛剛到底是「答錯」還是「放棄/答對」
-            // 只有在【已放棄】或者是【答案正確（按鈕已被換成下一題）】的情境下，才需要維持或設定為下一題
-            if (surrenderStateActive) {
-                // 如果是放棄狀態，確保按鈕維持下一題
+            // 3. 精準判斷目前答案格子的真實對錯狀態
+            let currentAnswersAreValid = true;
+            for(let i=0; i<4; i++) {
+                if(currentAnswersState[i] !== secretLevelTargetPattern[i]) {
+                    currentAnswersAreValid = false;
+                }
+            }
+
+            // 💡 🔒 死守防線 5 的雙重保險分流
+            if (surrenderStateActive || currentAnswersAreValid) {
+                // 如果玩家已經【點了放棄】或者【答案已經答對】（情境1、4）：
+                // 關窗後，強制確保按鈕精確固定在「下一題 ➔」，絕對不給任何再次檢查刷分的機會！
                 const checkActionNode = document.getElementById('check-btn');
                 checkActionNode.innerHTML = "下一題 ➔";
                 checkActionNode.className = "px-6 py-2.5 bg-zinc-100 border border-white text-zinc-900 font-black rounded-xl shadow-md transition-colors uppercase tracking-wider text-sm";
                 checkActionNode.onclick = stepForwardToNextLevelPattern;
+                checkActionNode.disabled = false;
             } else {
-                // 🌟 如果使用者剛剛是【答錯（情境3）】而觸發彩蛋
-                // 因為答案依然不對，所以關閉彈窗後，我們要維持原本常規答錯的樣子：
-                // 按鈕必須保持原樣（檢查答案），且不能反灰，讓使用者可以繼續點擊修改！
-                
-                // 檢查目前畫面的按鈕文字，如果是下一題，表示剛剛不是答錯，就不動它
-                // 如果不是下一題，代表剛剛是答錯，我們強制確保它維持「✓ 檢查」的原始設定：
+                // 只有在【依然答錯（情境3）】的情況下：
+                // 關窗後，按鈕才強制校正恢復回「✓ 檢查」，讓玩家繼續留原地猜答案！
                 const checkActionNode = document.getElementById('check-btn');
-                if (checkActionNode.innerHTML !== "下一題 ➔") {
-                    checkActionNode.innerHTML = "✓ 檢查";
-                    checkActionNode.className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-md";
-                    checkActionNode.onclick = checkUserSubmission; // 綁定回檢查函式
-                    checkActionNode.disabled = false; // 確保沒有被誤鎖
-                }
+                checkActionNode.innerHTML = "✓ 檢查";
+                checkActionNode.className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed shadow-md";
+                checkActionNode.onclick = checkUserSubmission;
+                checkActionNode.disabled = false;
             }
         }
 
