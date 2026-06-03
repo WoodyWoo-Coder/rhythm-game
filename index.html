@@ -58,10 +58,37 @@
             z-index: 30 !important;
             pointer-events: none;
         }
+        /* 強制橫螢幕提示遮罩 */
+       #orientation-blocker {
+           display: none;
+           position: fixed;
+           inset: 0;
+           background-color: #18181b;
+           z-index: 9999;
+           color: #ffffff;
+           flex-direction: column;
+           align-items: center;
+           justify-content: center;
+           padding: 2rem;
+           text-align: center;
+       }
+
+       /* 螢幕寬度小於 1024px 且為直向時觸發 */
+       @media (max-width: 1023px) and (orientation: portrait) {
+           #orientation-blocker {
+               display: flex;
+           }
+       }
     </style>
 </head>
 <body class="bg-zinc-900 text-zinc-100 font-sans min-h-screen flex flex-col items-center justify-center p-4 select-none">
 
+   <!-- 直螢幕阻擋遮罩 -->
+   <div id="orientation-blocker">
+       <div style="font-size: 3rem; margin-bottom: 1rem; animation: pulse 2s infinite;">🔄</div>
+       <h2 style="font-size: 1.5rem; font-weight: 900; letter-spacing: 0.1em; margin-bottom: 0.5rem;">請將手機旋轉為橫向</h2>
+       <p style="color: #a1a1aa; font-size: 0.875rem;">本遊戲需要寬廣的舞台，橫著玩才能完美對齊節奏喔！</p>
+   </div>
     <div id="screen-1" class="w-full max-w-3xl text-center py-12 px-6 bg-zinc-800 rounded-2xl border border-zinc-700 shadow-2xl space-y-8 block relative">
         <div class="border-4 border-zinc-600 p-8 rounded-xl max-w-xl mx-auto bg-zinc-855">
             <h1 class="text-4xl md:text-6xl font-black tracking-wider text-white">
@@ -92,7 +119,7 @@
 
         <div id="start-game-container" class="pt-6 transition-all duration-300 opacity-100 max-h-24">
             <button id="mainStartBtn" onclick="advanceToScreen2()" disabled class="px-12 py-4 bg-zinc-600 border-2 border-zinc-500 text-zinc-400 font-black text-lg rounded-xl transition-all shadow-xl cursor-not-allowed uppercase tracking-wide">
-                正在從雲端載入頂級音訊防線 (約 5 秒)...
+                正在從雲端載入頂級音訊防線 (約 3 秒)...
             </button>
         </div>
     </div>
