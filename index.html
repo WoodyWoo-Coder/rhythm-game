@@ -1163,7 +1163,7 @@ function generateSecretLevelTargetPattern() {
             updateAssistantExpression('warn');
             buildUserBlanks(); // 刷新格子，此時 buildUserBlanks 內部會遵循 surrenderStateActive 的防線，讓重置按鈕死死保持禁用！
         }
-        
+
         function enableAllInteractionControls() {
             document.getElementById('check-btn').innerHTML = "✓ 檢查";
             document.getElementById('check-btn').className = "px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl text-sm font-black text-zinc-200 transition-colors uppercase tracking-wider shadow-md";
@@ -1239,13 +1239,8 @@ function generateSecretLevelTargetPattern() {
             if (selectedMode === 'easy' && totalQuestionsProcessed === 7) {
                 let currentScoreBase = parseFloat(dynamicCorrectCount.toFixed(1));
 
-                // 🌟 【情境 1】：原本 5/6 分，不靠提示且第一次答對 (+1.0) -> 剛好 6.0 分
                 let isSituation1 = (currentScoreBase === 5.0 && !hasAttemptedCurrentQuestion && !hintUsedForCurrentQuestion && answersAreValid);
-                
-                // 🌟 【情境 4】：原本 5.5/6 分，使用了提示且第一次答對 (+0.5) -> 剛好 6.0 分
                 let isSituation4 = (currentScoreBase === 5.5 && !hasAttemptedCurrentQuestion && hintUsedForCurrentQuestion && answersAreValid);
-
-                // 🌟 【情境 3】：原本 6/6 分（滿分），結果第七題答錯了 (+0.0) -> 依舊保持 6.0 分
                 let isSituation3_Wrong = (currentScoreBase === 6.0 && !hasAttemptedCurrentQuestion && !answersAreValid);
 
                 // ─── 情況 A：如果是答對的彩蛋（情境 1 或 4） ───
@@ -1263,15 +1258,20 @@ function generateSecretLevelTargetPattern() {
                     
                     disableAllInteractionControls();
                     
-                    // 🔒【精確鎖定】：彩蛋答對時，凍結格子容器，並禁用 reset 按鈕
+                    // 🔒【精確鎖定】：凍結格子、禁用 Reset，並強制【鎖死播放鍵】
                     const userBlanksArea = document.getElementById('user-blanks-target');
-                    if (userBlanksArea) {
-                        userBlanksArea.style.pointerEvents = 'none';
-                    }
+                    if (userBlanksArea) userBlanksArea.style.pointerEvents = 'none';
+                    
                     const resetBtnNode = document.getElementById('reset-blanks-btn');
                     if (resetBtnNode) {
                         resetBtnNode.disabled = true;
                         resetBtnNode.style.opacity = '0.3';
+                    }
+                    
+                    const playBtnNode = document.getElementById('play-btn');
+                    if (playBtnNode) {
+                        playBtnNode.disabled = true;
+                        playBtnNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
                     }
 
                     const checkActionNode = document.getElementById('check-btn');
@@ -1333,15 +1333,20 @@ function generateSecretLevelTargetPattern() {
                 
                 disableAllInteractionControls(); 
                 
-                // 🔒【精確鎖定】：常規關卡答對時，將格子容器切斷點擊，並禁用 reset 按鈕
+                // 🔒【精確鎖定】：常規答對時，格子切斷、Reset 禁用，【播放鍵同步火速鎖死】！
                 const userBlanksArea = document.getElementById('user-blanks-target');
-                if (userBlanksArea) {
-                    userBlanksArea.style.pointerEvents = 'none';
-                }
+                if (userBlanksArea) userBlanksArea.style.pointerEvents = 'none';
+                
                 const resetBtnNode = document.getElementById('reset-blanks-btn');
                 if (resetBtnNode) {
                     resetBtnNode.disabled = true;
                     resetBtnNode.style.opacity = '0.3';
+                }
+                
+                const playBtnNode = document.getElementById('play-btn');
+                if (playBtnNode) {
+                    playBtnNode.disabled = true;
+                    playBtnNode.className = "px-6 py-2.5 rounded-xl text-sm font-bold bg-zinc-855 border border-zinc-800 text-zinc-600 cursor-not-allowed uppercase tracking-wider opacity-30 shadow-none";
                 }
                 
                 const checkActionNode = document.getElementById('check-btn');
